@@ -56,34 +56,35 @@
                             <div class="col-md-4">
                                 <label for="ma_lo" class="form-label">Mã Lô Cây Trồng</label>
                                 <input type="text" class="form-control" name="ma_lo"
-                                    placeholder="Mã lô tự động tạo khi nhập: Năm trồng, Nông trường và Find"
+                                    placeholder="Mã lô tự động tạo khi nhập: Năm trồng, Khu Vực và Find"
                                     value="{{ old('ma_lo', $plantingArea->ma_lo ?? '') }}" readonly>
                             </div>
-                            <!-- Chọn Đơn Vị -->
+                            <!-- Chọn Nông Trường -->
                             <div class="col-md-4">
-                                <label for="unit" class="form-label">Đơn Vị <span style="color: red;">*</span></label>
+                                <label for="unit" class="form-label">Nông Trường <span
+                                        style="color: red;">*</span></label>
                                 <select class="form-control" id="unit"
                                     style="pointer-events: none; background-color: #e9ecef;">
-                                    <option value="">Chọn Đơn Vị</option>
+                                    <option value="">Chọn Nông Trường</option>
                                     @foreach ($units as $unit)
-                                    <option value="{{ $unit->id }}" {{ old('unit', $selectedUnitId) == $unit->id ?
-                                            'selected' : '' }}>
+                                    <option value="{{ $unit->id }}" {{ old('unit', $selectedUnitId)==$unit->id ?
+                                        'selected' : '' }}>
                                         {{ $unit->unit_name }}
                                     </option>
                                     @endforeach
                                 </select>
                             </div>
 
-                            <!-- Chọn Nông Trường -->
+                            <!-- Chọn Khu Vực -->
                             <div class="col-md-4">
-                                <label for="farm_id" class="form-label">Nông Trường <span
+                                <label for="farm_id" class="form-label">Khu Vực <span
                                         style="color: red;">*</span></label>
                                 <select class="form-control" name="farm_id" id="farm_id"
                                     style="pointer-events: none; background-color: #e9ecef;">
-                                    <option value="">Chọn Đơn Vị trước</option>
+                                    <option value="">Chọn Nông Trường trước</option>
                                     @foreach ($farms as $val)
                                     <option value="{{ $val->id }}" {{ old('farm_id', $plantingArea->farm_id ?? '') ==
-                                            $val->id ? 'selected' : '' }}>
+                                        $val->id ? 'selected' : '' }}>
                                         {{ $val->farm_name }}
                                     </option>
                                     @endforeach
@@ -269,7 +270,7 @@
                 url: '/get-farms-by-unit/' + unitId,
                 type: 'GET',
                 success: function(data) {
-                    $('#farm_id').empty().append('<option value="">Chọn Nông Trường</option>');
+                    $('#farm_id').empty().append('<option value="">Chọn Khu Vực</option>');
                     $.each(data, function(i, farm) {
                         let selected = farm.id == selectedFarmId ? 'selected' : '';
                         $('#farm_id').append('<option value="' + farm.id + '" ' + selected + '>' + farm.farm_name + '</option>');
@@ -277,7 +278,7 @@
                 }
             });
         } else {
-            $('#farm_id').empty().append('<option value="">Chọn đơn vị trước</option>');
+            $('#farm_id').empty().append('<option value="">Chọn Nông Trường trước !</option>');
         }
     }
 

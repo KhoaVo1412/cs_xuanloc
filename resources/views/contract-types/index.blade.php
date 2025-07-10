@@ -101,7 +101,7 @@
         var selectedRows = new Set();
         var dataTable = $('#contract-types').DataTable({
             "language": {
-                "url": "//cdn.datatables.net/plug-ins/1.10.21/i18n/Vietnamese.json"
+                // "url": "//cdn.datatables.net/plug-ins/1.10.21/i18n/Vietnamese.json"
             },
             processing: true,
             serverSide: true,
@@ -150,7 +150,8 @@
                 data: 'check',
                 name: 'check',
                 orderable: false,
-                searchable: false
+                searchable: false,
+                width: '40px'
             },
             // {
             //     data: 'DT_RowIndex',

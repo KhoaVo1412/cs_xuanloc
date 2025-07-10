@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HOA BINH RUBBER</title>
+    <title>Xuân Lộc Rubber</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -134,11 +134,11 @@
                 {{-- style="background: rgb(25 135 84)"> --}}
                 <div class="sidebar-header position-relative">
                     <div class="d-flex justify-content-between align-items-center">
-                        <div class="logo">
+                        <div class="logo" style="text-align: center">
                             <a href="/"><img src="/imgs/lohogo_xl.png" alt="Logo" srcset=""
-                                    style="width:100%; height: auto"></a>
+                                    style="width:60%; height: auto"></a>
                         </div>
-                        <div class="theme-toggle d-flex gap-2 align-items-center mt-2">
+                        {{-- <div class="theme-toggle d-flex gap-2 align-items-center mt-2">
                             <form id="logout-form" action="/logout" method="POST">
                                 @csrf
                                 <button type="submit" class="BtnOut">
@@ -148,7 +148,7 @@
                                     </div>
                                 </button>
                             </form>
-                        </div>
+                        </div> --}}
                         <div class="sidebar-toggler x">
                             <a href="#" class="sidebar-hide d-xl-none d-block"><i class="bi bi-x bi-middle"></i></a>
                         </div>
@@ -187,7 +187,7 @@
                                 ? 'active'
                                 : '' }}' onclick="toggleActive(this)">
                                 <i class="fa-regular fa-farm"></i>
-                                <span>Khu Vực</span>
+                                <span>Nông Trường</span>
                             </a>
                             <ul class="submenu {{ Route::is('add-plantingareas') ||
                                 Route::is('edit-plantingareas') ||
@@ -213,15 +213,20 @@
                                 ? ' active' : '' }}">
                                 @hasrole('Admin')
                                 <li
-                                    class="submenu-item d-flex d-flex align-items-center ms-3 {{ Route::is('farms.index') ? ' active' : '' }}">
-                                    <i class="fa-solid fa-tree text-white"></i>
-                                    <a href="{{ route('farms.index') }}">Danh Sách Khu Vực</a>
-                                </li>
-                                <li
                                     class="submenu-item d-flex d-flex align-items-center ms-3 {{ Route::is('units.index') ? ' active' : '' }}">
                                     <i class="fa-solid fa-building text-white"></i>
                                     <a href="{{ route('units.index') }}">Nông Trường</a>
                                 </li>
+                                @endrole
+
+                                @hasrole('Admin|Nông Trường')
+                                <li
+                                    class="submenu-item d-flex d-flex align-items-center ms-3 {{ Route::is('farms.index') ? ' active' : '' }}">
+                                    <i class="fa-solid fa-tree text-white"></i>
+                                    <a href="{{ route('farms.index') }}">Danh Sách Khu Vực</a>
+                                </li>
+                                @endrole
+                                @hasrole('Admin')
                                 <li
                                     class="submenu-item d-flex  align-items-center ms-3 {{ Route::is('typeofpus.index') ? ' active' : '' }}">
                                     <i class="fa-solid fa-octagon-plus text-white"></i>
@@ -486,22 +491,22 @@
                                     <span>Thông Tin Tài Khoản</span>
                                 </a>
                                 <ul class="submenu {{ Route::is('all.permissions') ||
-    Route::is('show.permissions') ||
-    Route::is('all.roles') ||
-    Route::is('show.roles') ||
-    Route::is('all.users') ||
-    Route::is('show.users') ||
-    Route::is('addPermissionToRole')
-    ? ' active' : '' }}">
-                                    <li
-                                        class="submenu-item d-flex d-flex  align-items-center ms-3 {{ Route::is('all.roles') ? ' active' : '' }}">
-                                        <i class="bi bi-grid-fill text-white"></i>
-                                        <a href=" {{ route('all.roles') }}">Vai Trò</a>
-                                    </li>
+                                    Route::is('show.permissions') ||
+                                    Route::is('all.roles') ||
+                                    Route::is('show.roles') ||
+                                    Route::is('all.users') ||
+                                    Route::is('show.users') ||
+                                    Route::is('addPermissionToRole')
+                                    ? ' active' : '' }}">
                                     <li
                                         class="submenu-item d-flex d-flex  align-items-center ms-3 {{ Route::is('all.permissions') ? ' active' : '' }}">
                                         <i class="bi bi-grid-fill text-white"></i>
                                         <a href=" {{ route('all.permissions') }}">Quyền</a>
+                                    </li>
+                                    <li
+                                        class="submenu-item d-flex d-flex  align-items-center ms-3 {{ Route::is('all.roles') ? ' active' : '' }}">
+                                        <i class="bi bi-grid-fill text-white"></i>
+                                        <a href=" {{ route('all.roles') }}">Vai Trò</a>
                                     </li>
                                     <li
                                         class="submenu-item d-flex d-flex  align-items-center ms-3 {{ Route::is('all.users') ? ' active' : '' }}">
@@ -515,10 +520,25 @@
                         <li class="sidebar-item">
                             <a href="{{ route('setting.index') }}" class='sidebar-link' onclick="toggleActive(this)">
                                 <i class="fa-solid fa-gear"></i>
-                                <span>Cài đặt</span>
+                                <span>Cài Đặt</span>
                             </a>
                         </li>
                         @endhasanyrole
+
+                        <li class="sidebar-item" style="margin-left: 25px;">
+                            <button class="btn btn-sm btn-dx"
+                                style="border-radius: 7px;background-color: rgb(206, 43, 43);">
+                                <a href="#" class="sidebar-link" style="padding: 0 0 0 0 !important;"
+                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                    <i class="fa-solid fa-right-from-bracket"></i> <span
+                                        style="margin-left: 0.2rem !important;">Đăng Xuất</span>
+                                </a>
+                            </button>
+                            <!-- Hidden logout form -->
+                            <form id="logout-form" action="/logout" method="POST" style="display: none;">
+                                @csrf
+                            </form>
+                        </li>
                     </ul>
                 </div>
 

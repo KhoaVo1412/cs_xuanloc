@@ -184,6 +184,7 @@
                                         data: 'check',
                                         name: 'check',
                                         orderable: false,
+                                        width: '40px'
                                     },
                                     {
                                         data: 'batch_code',

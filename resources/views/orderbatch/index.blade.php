@@ -2,7 +2,7 @@
 @section('content')
 <div class="container-fluid">
     <!-- Page Header -->
-    <div class="d-md-flex d-block align-items-center justify-content-between my-4 page-header-breadcrumb">
+    <div class="d-md-flex d-block align-items-center justify-content-between my-1 page-header-breadcrumb">
         <h4 class="page-title fw-semibold fs-18 mb-0"></h4>
         <div class="ms-md-1 ms-0">
 
@@ -129,7 +129,8 @@
                                     data: 'check',
                                     name: 'check',
                                     orderable: false,
-                                    searchable: false
+                                    searchable: false,
+                                    width: '40px'
                                 },
                                 // {
                                 //     data: 'stt',

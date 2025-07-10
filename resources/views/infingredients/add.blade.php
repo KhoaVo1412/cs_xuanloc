@@ -28,22 +28,22 @@
                     </div>
                     <div class="card-body">
                         <div class="row modal-body gy-4">
-                            <!-- Chọn Đơn Vị -->
+                            <!-- Chọn Nông Trường -->
                             <div class="col-md-4">
-                                <label for="unit" class="form-label">Đơn Vị</label>
+                                <label for="unit" class="form-label">Nông Trường</label>
                                 <select class="form-control" name="unit_id" id="unit" required>
-                                    <option value="">Chọn Đơn Vị</option>
+                                    <option value="">Chọn Nông Trường</option>
                                     @foreach ($units as $unit)
                                     <option value="{{ $unit->id }}">{{ $unit->unit_name }}</option>
                                     @endforeach
                                 </select>
                             </div>
-                            <!-- Chọn Nông Trường -->
+                            <!-- Chọn Khu Vực -->
                             <div class="col-md-4">
-                                <label for="farm_id" class="form-label">Nông Trường</label>
+                                <label for="farm_id" class="form-label">Khu Vực</label>
                                 <select class="form-control" name="farm_id" id="farm_id" required>
-                                    <option value="">Chọn Nông Trường</option>
-                                    <!-- Nông Trường sẽ được load sau khi chọn đơn vị -->
+                                    <option value="">Chọn Khu Vực</option>
+                                    <!-- Khu Vực sẽ được load sau khi chọn Nông Trường -->
                                 </select>
                             </div>
                             <!-- Nhà Máy Tiếp Nhận -->
@@ -86,7 +86,7 @@
                                 <select class="form-control select2" name="vehicle_number_id" id="vehicle_number_id"
                                     required>
                                     <option value="">Chọn Số Xe</option>
-                                    <!-- Số xe sẽ được load khi chọn đơn vị -->
+                                    <!-- Số xe sẽ được load khi chọn Nông Trường -->
                                 </select>
                             </div>
 
@@ -174,7 +174,7 @@
 
                         $('#unit').select2({
                             language: "vi",
-                            placeholder: "Chọn Đơn Vị",
+                            placeholder: "Chọn Nông Trường",
                             allowClear: true,
                             minimumResultsForSearch: 0,
                             width: '100%',
@@ -182,7 +182,7 @@
 
                         $('#farm_id').select2({
                             language: "vi",
-                            placeholder: "Chọn Nông Trường",
+                            placeholder: "Chọn Khu Vực",
                             allowClear: true,
                             minimumResultsForSearch: 0,
                             width: '100%',
@@ -202,7 +202,7 @@
                             width: '100%',
                         });
 
-                        // Khi chọn Đơn Vị
+                        // Khi chọn Nông Trường
                         $('#unit').on('change', function () {
                             const unit = $(this).val();
                             const farmSelect = $('#farm_id');
@@ -211,7 +211,7 @@
                             const trip = $('[name="trip"]');
                             farmSelect.empty().trigger('change');
                             vehicleSelect.empty().trigger('change');
-                            farmSelect.append('<option value="">Đang tải nông trường...</option>');
+                            farmSelect.append('<option value="">Đang tải Khu Vực...</option>');
                             vehicleSelect.append('<option value="">Đang tải xe...</option>');
 
                             farmSelect.prop('disabled', true);
@@ -232,7 +232,6 @@
                                     });
                                     farmSelect.prop('disabled', false);
                                     farmSelect.prop('selectedIndex', -1); // Không chọn gì
-                                    // Lấy các số xe liên quan đến đơn vị
                                     $.ajax({
                                         url: '{{ route("get-vehicles") }}',
                                         method: 'GET',
@@ -356,7 +355,7 @@
                                     Swal.fire({
                                         icon: 'error',
                                         title: 'Lỗi!',
-                                        text: 'Không thể tải danh sách nông trường.',
+                                        text: 'Không thể tải danh sách Khu Vực.',
                                         confirmButtonText: 'OK'
                                     });
                                 }

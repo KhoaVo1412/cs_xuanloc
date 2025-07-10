@@ -31,7 +31,7 @@
                 <div class="modal-body px-4">
                     <div class="row gy-2">
                         <div class="col-xl-12">
-                            <label for="unit" class="form-label">Chọn Đơn Vị</label>
+                            <label for="unit" class="form-label">Chọn Nông Trường</label>
 
                             @if($singleUnit)
                             <select class="form-control" id="unit" name="unit_id" required disabled>
@@ -102,9 +102,9 @@
             <div class="card-body">
                 <div class="row mb-3">
                     <div class="col-md-4 col-9 mb-2">
-                        <label class="text-dark fw-bold" for="farm-filter">Đơn vị</label>
+                        <label class="text-dark fw-bold" for="farm-filter">Nông Trường</label>
                         <select id="filter_unit" class="form-select">
-                            <option value="">Chọn đơn vị</option>
+                            <option value="">Chọn Nông Trường</option>
                             @foreach ($units as $unit)
                             <option value="{{ $unit->id }}" @if(isset($singleUnit) && $singleUnit->id == $unit->id)
                                 selected @endif>
@@ -138,7 +138,7 @@
                             </th>
                             {{-- <th scope="col">STT</th> --}}
                             {{-- <th scope="col">Nông Trường</th> --}}
-                            <th scope="col">Đơn Vị</th>
+                            <th scope="col">Nông Trường</th>
                             <th scope="col">Số Xe</th>
                             <th scope="col">Tên Xe</th>
                             <th scope="col">Tài Xế</th>
@@ -159,7 +159,7 @@
                             </th>
                             {{-- <th scope="col">STT</th> --}}
                             {{-- <th scope="col">Nông Trường</th> --}}
-                            <th scope="col">Đơn Vị</th>
+                            <th scope="col">Nông Trường</th>
                             <th scope="col">Số Xe</th>
                             <th scope="col">Tên Xe</th>
                             <th scope="col">Tài Xế</th>

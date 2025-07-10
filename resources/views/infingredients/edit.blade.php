@@ -30,7 +30,7 @@
 
                             <!-- Unit Selection Dropdown -->
                             <div class="col-md-4">
-                                <label for="unit_id" class="form-label">Đơn Vị</label>
+                                <label for="unit_id" class="form-label">Nông Trường</label>
                                 <select class="form-control" name="unit_id" id="unit_id" required>
                                     @foreach ($units as $unit)
                                     <option value="{{ $unit->id }}" {{-- {{ $ingredient->farm->unit_id == $unit->id ?
@@ -43,9 +43,9 @@
                             </div>
                             <!-- Farm Selection Dropdown -->
                             <div class="col-md-4">
-                                <label for="farm_id" class="form-label">Nông Trường</label>
+                                <label for="farm_id" class="form-label">Khu Vực</label>
                                 <select class="form-control" name="farm_id" id="farm_id" required>
-                                    <option value="">Chọn Nông Trường</option>
+                                    <option value="">Chọn Khu Vực</option>
                                 </select>
                             </div>
                             <div class="col-md-4">
@@ -81,11 +81,11 @@
                                 </select>
                             </div>
                             {{--
-                            <!-- Chọn Đơn Vị -->
+                            <!-- Chọn Nông Trường -->
                             <div class="col-md-3">
-                                <label for="unit_id" class="form-label">Đơn Vị</label>
+                                <label for="unit_id" class="form-label">Nông Trường</label>
                                 <select class="form-control" name="unit_id" id="unit_id" required>
-                                    <option value="">Chọn Đơn Vị</option>
+                                    <option value="">Chọn Nông Trường</option>
                                     @foreach ($units as $unit)
                                     <option value="{{ $unit->id }}" {{ old('unit_id', $ingredient->farm->unit_id) ==
                                         $unit->id ? 'selected' : '' }}>
@@ -95,12 +95,12 @@
                                 </select>
                             </div>
 
-                            <!-- Chọn Nông Trường -->
+                            <!-- Chọn Khu Vực -->
                             <div class="col-md-3">
-                                <label for="farm_id" class="form-label">Nông Trường</label>
+                                <label for="farm_id" class="form-label">Khu Vực</label>
                                 <select class="form-control" name="farm_id" id="farm_id" required>
-                                    <option value="">Chọn Nông Trường</option>
-                                    <!-- Nông Trường sẽ được load khi chọn Đơn Vị -->
+                                    <option value="">Chọn Khu Vực</option>
+                                    <!-- Khu Vực sẽ được load khi chọn Nông Trường -->
                                 </select>
                             </div>
 
@@ -109,7 +109,7 @@
                                 <label for="vehicle_number_id" class="form-label">Số Xe</label>
                                 <select name="vehicle_number_id" id="vehicle_number_id" class="form-control" required>
                                     <option value="">Chọn Số Xe</option>
-                                    <!-- Số xe sẽ được load khi chọn đơn vị -->
+                                    <!-- Số xe sẽ được load khi chọn Nông Trường -->
                                 </select>
                             </div> --}}
                             <div class="col-md-4">
@@ -208,12 +208,12 @@
 </section>
 {{-- <script>
     $(document).ready(function() {
-    // Lọc theo Đơn Vị (Khi chọn Đơn Vị)
+    // Lọc theo Nông Trường (Khi chọn Nông Trường)
     $('#unit_id').on('change', function() {
         const unitId = $(this).val();
 
         if (unitId) {
-            // Lấy danh sách nông trường theo đơn vị đã chọn
+            // Lấy danh sách Khu Vực theo Nông Trường đã chọn
             $.ajax({
                 url: '{{ route("get-farms-by-unit") }}',
 method: 'GET',
@@ -221,12 +221,12 @@ data: { unit: unitId },
 success: function(response) {
 const farmSelect = $('#farm_id');
 farmSelect.empty();
-farmSelect.append('<option value="">Chọn Nông Trường</option>');
+farmSelect.append('<option value="">Chọn Khu Vực</option>');
 $.each(response.farms, function(index, farm) {
 farmSelect.append('<option value="' + farm.id + '">' + farm.farm_name + '</option>');
 });
 
-// Lấy danh sách số xe thuộc đơn vị đã chọn
+// Lấy danh sách số xe thuộc Nông Trường đã chọn
 $.ajax({
 url: '{{ route("get-vehicles") }}',
 method: 'GET',
@@ -253,13 +253,13 @@ error: function() {
 Swal.fire({
 icon: 'error',
 title: 'Lỗi!',
-text: 'Không thể tải danh sách nông trường.',
+text: 'Không thể tải danh sách Khu Vực.',
 confirmButtonText: 'OK'
 });
 }
 });
 } else {
-$('#farm_id').empty().append('<option value="">Chọn Nông Trường</option>');
+$('#farm_id').empty().append('<option value="">Chọn Khu Vực</option>');
 $('#vehicle_number_id').empty().append('<option value="">Chọn Số Xe</option>');
 }
 });
@@ -269,7 +269,7 @@ const initialUnitId = $('#unit_id').val();
 const initialFarmId = $('#farm_id').val();
 const initialVehicleNumberId = $('#vehicle_number_id').val();
 if (initialUnitId) {
-$('#unit_id').trigger('change'); // Trigger để tải nông trường và xe khi có giá trị đơn vị
+$('#unit_id').trigger('change'); // Trigger để tải Khu Vực và xe khi có giá trị Nông Trường
 }
 if (initialFarmId) {
 $('#farm_id').val(initialFarmId).trigger('change');
@@ -283,7 +283,7 @@ $('#vehicle_number_id').val(initialVehicleNumberId).trigger('change');
 {{-- <script>
     $(document).ready(function() {
             $('#unit_id').select2({
-                placeholder: "Chọn Đơn Vị",
+                placeholder: "Chọn Nông Trường",
                 allowClear: true,
                 minimumResultsForSearch: 0,
                 width: '100%',
@@ -316,7 +316,7 @@ $('#vehicle_number_id').val(initialVehicleNumberId).trigger('change');
                                 Swal.fire({
                                     icon: 'info',
                                     title: 'Không có xe',
-                                    text: 'Không có xe nào thuộc đơn vị này.',
+                                    text: 'Không có xe nào thuộc Nông Trường này.',
                                     confirmButtonText: 'OK'
                                 });
                             }
@@ -456,14 +456,14 @@ $('#vehicle_number_id').val(initialVehicleNumberId).trigger('change');
             let isPlantingLoaded = false;
 
             $('#unit').select2({
-                placeholder: "Chọn Đơn Vị",
+                placeholder: "Chọn Nông Trường",
                 allowClear: true,
                 minimumResultsForSearch: 0,
                 width: '100%',
             });
 
             $('#farm_id').select2({
-                placeholder: "Chọn Nông Trường",
+                placeholder: "Chọn Khu Vực",
                 allowClear: true,
                 minimumResultsForSearch: 0,
                 width: '100%',
@@ -481,7 +481,7 @@ $('#vehicle_number_id').val(initialVehicleNumberId).trigger('change');
                 width: '100%',
             });
 
-            // Khi chọn Đơn Vị
+            // Khi chọn Nông Trường
             $('#unit_id').on('change', function() {
                 const unit = $(this).val();
                 const farmSelect = $('#farm_id');
@@ -492,7 +492,7 @@ $('#vehicle_number_id').val(initialVehicleNumberId).trigger('change');
                 vehicleSelect.empty().trigger('change');
                 // console.log("oldUnitId", oldUnitId);
                 // if (unit) {
-                // Lấy nông trường theo đơn vị
+                // Lấy Khu Vực theo Nông Trường
                 $.ajax({
                     url: '{{ route('get-farms-by-unit') }}',
                     method: 'GET',
@@ -506,7 +506,7 @@ $('#vehicle_number_id').val(initialVehicleNumberId).trigger('change');
                                 '">' + farm.farm_name + '</option>');
                         });
                         farmSelect.prop('selectedIndex', -1); // Không chọn gì
-                        // Lấy các số xe liên quan đến đơn vị
+                        // Lấy các số xe liên quan đến Nông Trường
                         $.ajax({
                             url: '{{ route('get-vehicles') }}',
                             method: 'GET',
@@ -629,7 +629,7 @@ $('#vehicle_number_id').val(initialVehicleNumberId).trigger('change');
                         Swal.fire({
                             icon: 'error',
                             title: 'Lỗi!',
-                            text: 'Không thể tải danh sách nông trường.',
+                            text: 'Không thể tải danh sách Khu Vực.',
                             confirmButtonText: 'OK'
                         });
                     }
@@ -640,7 +640,7 @@ $('#vehicle_number_id').val(initialVehicleNumberId).trigger('change');
                 // }
             });
 
-            // Khi chọn Nông Trường
+            // Khi chọn Khu Vực
             // $('#farm_id').on('change', function() {
             //     const farmId = $(this).val();
             //     isPlantingLoaded = false;

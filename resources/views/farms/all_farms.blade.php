@@ -46,7 +46,7 @@
                             </select>
                         </div>
                         {{-- <div class="col-xl-12">
-                            <label for="unit" class="form-label">Đơn Vị</label>
+                            <label for="unit" class="form-label">Nông Trường</label>
                             <select class="form-control" name="unit" id="unit">
                                 <option value="Công ty Cổ phần Cao su Hoà Bình">Công ty Cổ phần Cao su Hoà Bình</option>
                                 <option value="Công ty Cổ phần Cao su Thống Nhất">Công ty Cổ phần Cao su Thống Nhất
@@ -236,7 +236,8 @@
                         data: 'check',
                         name: 'check',
                         orderable: false,
-                        searchable: false
+                        searchable: false,
+                        width: '40px'
                     },
                     {
                         data: 'farm_code',

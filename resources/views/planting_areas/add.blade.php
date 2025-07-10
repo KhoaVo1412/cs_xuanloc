@@ -43,13 +43,14 @@
                             <div class="col-md-4">
                                 <label for="ma_lo" class="form-label">Mã Lô Cây Trồng</label>
                                 <input type="text" class="form-control" name="ma_lo"
-                                    placeholder="Mã lô tự động tạo khi nhập: Năm trồng, Nông trường và Find" readonly
+                                    placeholder="Mã lô tự động tạo khi nhập: Năm trồng, Khu Vực và Find" readonly
                                     value="{{ old('ma_lo') }}">
                             </div>
                             <div class="col-md-4">
-                                <label for="unit" class="form-label">Đơn Vị <span style="color: red;">*</span></label>
+                                <label for="unit" class="form-label">Nông Trường <span
+                                        style="color: red;">*</span></label>
                                 <select class="form-control" id="unit" name="unit_id" required>
-                                    <option value="">Chọn Đơn Vị</option>
+                                    <option value="">Chọn Nông Trường</option>
                                     @foreach ($units as $unit)
                                     <option value="{{ $unit->id }}" @if($singleUnit && $unit->id == $singleUnit->id)
                                         selected @endif>
@@ -60,10 +61,10 @@
                             </div>
 
                             <div class="col-md-4">
-                                <label for="farm_id" class="form-label">Nông Trường <span
+                                <label for="farm_id" class="form-label">Khu Vực <span
                                         style="color: red;">*</span></label>
                                 <select class="form-control" name="farm_id" id="farm_id" required>
-                                    <option value="">Chọn đơn vị trước</option>
+                                    <option value="">Chọn Nông Trường trước</option>
                                     @if($singleFarm)
                                     <option value="{{ $singleFarm->id }}" selected>{{ $singleFarm->farm_name }}</option>
                                     @else
@@ -217,7 +218,7 @@
 <script>
     $(document).ready(function () {
             $('#farm_id').select2({
-                placeholder: "Chọn Nông Trường",
+                placeholder: "Chọn Khu Vực",
                 allowClear: true,
                 minimumResultsForSearch: 0,
                 width: '100%',
@@ -233,7 +234,7 @@
                     type: 'GET',
                     success: function (data) {
                         $('#farm_id').empty();
-                        $('#farm_id').append('<option value="">Chọn Nông Trường</option>');
+                        $('#farm_id').append('<option value="">Chọn Khu Vực</option>');
 
                         // Nếu chỉ có một nông trại, tự động chọn và khóa dropdown
                         if (data.length === 1) {
@@ -252,23 +253,23 @@
                         Swal.fire({
                             icon: 'error',
                             title: 'Lỗi!',
-                            text: 'Không thể tải danh sách nông trường.',
+                            text: 'Không thể tải danh sách khu vực.',
                             confirmButtonText: 'OK'
                         });
                     }
                 });
             } else {
                 $('#farm_id').empty();
-                $('#farm_id').append('<option value="">Chọn đơn vị trước</option>');
-                $('#farm_id').prop('disabled', true); // Khóa dropdown nông trại khi không có đơn vị
+                $('#farm_id').append('<option value="">Chọn nông trường trước</option>');
+                $('#farm_id').prop('disabled', true); // Khóa dropdown nông trại khi không có Nông Trường
             }
         }
 
         $(document).ready(function () {
-            // Lắng nghe sự kiện thay đổi đơn vị
+            // Lắng nghe sự kiện thay đổi Nông Trường
             $('#unit').change(function () {
                 const unitId = $(this).val();
-                loadFarmsByUnit(unitId); // Gọi hàm để tải nông trại theo đơn vị
+                loadFarmsByUnit(unitId); // Gọi hàm để tải nông trại theo Nông Trường
             });
         });
 </script>

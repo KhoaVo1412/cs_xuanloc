@@ -63,7 +63,7 @@
                                     value="{{ $farms->farm_name }}" required>
                             </div>
                             <div class="col-md-4">
-                                <label for="unit" class="form-label">Đơn Vị</label>
+                                <label for="unit" class="form-label">Nông Trường</label>
                                 <select name="unit_id" id="unit" class="form-control" required>
                                     @foreach($units as $unit)
                                     <option value="{{ $unit->id }}" @if($farms->unit_id == $unit->id) selected @endif>
@@ -74,7 +74,7 @@
                             </div>
 
                             {{-- <div class="col-md-4">
-                                <label for="unit" class="form-label">Đơn Vị</label>
+                                <label for="unit" class="form-label">Nông Trường</label>
                                 <select name="unit" id="unit" class="form-control" required>
                                     <option value="Công ty Cổ phần Cao su Hoà Bình" @if($farms->unit === 'Công ty Cổ
                                         phần Cao su Hoà Bình') selected @endif>
