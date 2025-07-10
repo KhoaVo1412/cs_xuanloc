@@ -191,7 +191,7 @@
                                     <th scope="col">Ngày Kết Thúc Cạo</th>
                                     <th scope="col">Ngày Tiếp Nhận</th>
                                     <th scope="col">Nhà Máy Tiếp Nhận</th>
-                                    <th scope="col">Đơn Vị</th>
+                                    <th scope="col">Nông Trường</th>
                                     <th scope="col">Thao Tác</th>
                                 </tr>
                             </thead>
@@ -212,7 +212,7 @@
                                     <th scope="col">Ngày Kết Thúc Cạo</th>
                                     <th scope="col">Ngày Tiếp Nhận</th>
                                     <th scope="col">Nhà Máy Tiếp Nhận</th>
-                                    <th scope="col">Đơn Vị</th>
+                                    <th scope="col">Nông Trường</th>
                                     <th scope="col">Thao Tác</th>
                                 </tr>
                             </tfoot>

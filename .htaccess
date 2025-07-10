@@ -1,1 +1,10 @@
- 
+RewriteEngine On
+
+# Redirect requests to the public folder
+RewriteRule ^$ public/index.php [L]
+RewriteRule (.*) public/$1 [L]
+
+<Files 403.shtml>
+order allow,deny
+allow from all
+</Files>

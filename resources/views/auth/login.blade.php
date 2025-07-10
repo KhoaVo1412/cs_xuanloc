@@ -42,7 +42,7 @@
             color: #34A853;
             margin-bottom: 20px;
             /* padding-top: 18%; */
-            padding-top: 14%;
+            padding-top: 8%;
             text-align: center;
         }
 
@@ -172,7 +172,7 @@
         }
 
         .logo-img {
-            width: 170px;
+            width: 130px;
             height: auto;
         }
 
@@ -190,7 +190,7 @@
             .right h2 {
                 font-size: 15px;
                 margin: 0 0 0 -10px;
-                padding-top: 14%;
+                padding-top: 7%;
             }
 
             .left p {
@@ -215,7 +215,7 @@
             }
 
             .logo-img {
-                width: 160px;
+                width: 120px;
             }
 
             .support button {
@@ -286,7 +286,7 @@
         <div class="left">
             <div class="d-flex" style="display: flex;">
                 <div class="logo">
-                    <img src="/imgs/lohogo_xl.png" alt="Binh Long Rubber Logo" class="logo-img">
+                    <img src="/imgs/lohogo_xl.png" alt="Xuan Loc Rubber Logo" class="logo-img">
                 </div>
                 <h2 class="align-items-center">{{ $postLogin->name ?? '' }}</h2>
             </div>

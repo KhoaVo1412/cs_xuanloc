@@ -92,7 +92,7 @@
                                                     <th scope="col">Mã Lô Cây Trồng</th>
                                                     <th scope="col">Mã Khu Vực Trồng</th>
                                                     <th scope="col">Khu Vực</th>
-                                                    <th scope="col">Đơn Vị</th>
+                                                    <th scope="col">Nông Trường</th>
                                                     <th scope="col">Năm Trồng</th>
                                                     <th scope="col">Thao Tác</th>
                                                 </tr>
@@ -109,7 +109,7 @@
                                                     <th scope="col">Mã Lô Cây Trồng</th>
                                                     <th scope="col">Mã Khu Vực Trồng</th>
                                                     <th scope="col">Khu Vực</th>
-                                                    <th scope="col">Đơn Vị</th>
+                                                    <th scope="col">Nông Trường</th>
                                                     <th scope="col">Năm Trồng</th>
                                                     <th scope="col">Thao Tác</th>
                                                 </tr>

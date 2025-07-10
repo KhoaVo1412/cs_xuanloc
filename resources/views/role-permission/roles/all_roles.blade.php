@@ -2,7 +2,7 @@
 @section('content')
 <div class="container-fluid1">
     <!-- Page Header -->
-    <div class="d-md-flex d-block align-items-center justify-content-between my-4 page-header-breadcrumb">
+    <div class="d-md-flex d-block align-items-center justify-content-between my-1 page-header-breadcrumb">
         <h4 class="page-title fw-semibold fs-18 mb-0"></h4>
         <div class="ms-md-1 ms-0">
             <nav>
@@ -154,7 +154,8 @@
                                                     },
                                                     {
                                                         data: 'stt',
-                                                        name: 'stt'
+                                                        name: 'stt',
+                                                        width: '40px'
                                                     },
                                                     {
                                                         data: 'name',

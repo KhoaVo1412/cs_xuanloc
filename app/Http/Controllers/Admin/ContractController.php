@@ -688,7 +688,7 @@ class ContractController extends Controller
                     'action_type' => 'Cập Nhật',
                     'model_type' => 'Hợp Đồng',
                     'model_id' => $contract->id,
-                    'details' => $details, // Log the specific changes
+                    'details' => $details,
                 ]);
             }
             // Commit các thay đổi vào cơ sở dữ liệu

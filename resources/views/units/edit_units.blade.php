@@ -44,7 +44,7 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-4">
-                                <label for="unit_name" class="form-label">Tên Đơn Vị</label>
+                                <label for="unit_name" class="form-label">Tên Nông Trường</label>
                                 <input type="text" class="form-control" name="unit_name" placeholder="Tên"
                                     value="{{ $units->unit_name }}" required>
                             </div>

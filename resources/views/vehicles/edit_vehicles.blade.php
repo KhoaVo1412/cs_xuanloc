@@ -45,7 +45,7 @@
                         <div class="row">
                             <!-- Unit Select -->
                             <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12">
-                                <label for="unit" class="form-label">Chọn Đơn Vị</label>
+                                <label for="unit" class="form-label">Chọn Nông Trường</label>
                                 <select class="form-control" id="unit" name="unit_id" required>
                                     <option value="">Chọn</option>
                                     @foreach($units as $unit)
@@ -109,7 +109,7 @@
 </section>
 <script>
     $(document).ready(function () {
-        // Khi chọn Đơn Vị, cập nhật Nông Trường tương ứng
+        // Khi chọn Nông Trường, cập nhật Nông Trường tương ứng
         $('#unit').on('change', function () {
             const unitId = $(this).val();
             // Ajax to fetch farms related to selected unit
@@ -129,7 +129,7 @@
                     }
                 });
             } else {
-                $('#farm_id').empty().append('<option value="">Chọn Đơn Vị trước</option>');
+                $('#farm_id').empty().append('<option value="">Chọn Nông Trường Trước</option>');
             }
         });
     });

@@ -207,7 +207,8 @@
                         data: 'check',
                         name: 'check',
                         orderable: false,
-                        searchable: false
+                        searchable: false,
+                        width: '40px'
                     },
                     // { data: 'stt', name: 'stt' },
                     {

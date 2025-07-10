@@ -1,13 +1,13 @@
 @extends('layouts.app')
 @section('content')
 <div class="container-fluid">
-    <div class="d-md-flex d-block align-items-center justify-content-between my-4 page-header-breadcrumb">
+    <div class="d-md-flex d-block align-items-center justify-content-between my-1 page-header-breadcrumb">
         <h5 class="page-title fw-semibold fs-18 mb-0"></h5>
         <div class="ms-md-1 ms-0">
             <nav>
                 <ol class="breadcrumb mb-0 padding">
                     <li class="breadcrumb-item"><a href="javascript:void(0);">Trang Chủ</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Danh Sách Đơn Vị</li>
+                    <li class="breadcrumb-item active" aria-current="page">Danh Sách Nông Trường</li>
                 </ol>
             </nav>
         </div>
@@ -21,7 +21,7 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h6 class="modal-title">Tạo Đơn Vị</h6>
+                    <h6 class="modal-title">Tạo Nông Trường</h6>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body px-4">
@@ -29,7 +29,7 @@
                         <!-- Tên -->
 
                         <div class="col-xl-12">
-                            <label for="unit_name" class="form-label">Tên Đơn Vị</label>
+                            <label for="unit_name" class="form-label">Tên Nông Trường</label>
                             <input type="text" class="form-control" name="unit_name" id="unit_name" required
                                 placeholder="Nhập tên">
                         </div>
@@ -58,10 +58,10 @@
     <div class="col-xl-12">
         <div class="card custom-card">
             <div class="card-header d-flex justify-content-between align-items-center" style="grid-gap: 3px">
-                <h5>Danh Sách Đơn Vị</h5>
+                <h5>Danh Sách Nông Trường</h5>
                 <button class="btn btn-sm btn-success btn-wave waves-light" data-bs-toggle="modal"
                     data-bs-target="#create-units">
-                    <i class=" fas fa-plus ri-add-line fw-semibold align-middle me-1"></i> Tạo Đơn Vị
+                    <i class=" fas fa-plus ri-add-line fw-semibold align-middle me-1"></i> Tạo Nông Trường
                 </button>
             </div>
             {{-- <style>
@@ -96,7 +96,7 @@
                                     aria-label="...">
                             </th>
                             {{-- <th scope="col">STT</th> --}}
-                            <th scope="col">Tên Đơn Vị</th>
+                            <th scope="col">Tên Nông Trường</th>
                             <th scope="col">Trạng Thái</th>
                             {{-- <th scope="col">Thao tác</th> --}}
                         </tr>
@@ -110,7 +110,7 @@
                             <th>
                             </th>
                             {{-- <th scope="col">STT</th> --}}
-                            <th scope="col">Tên Đơn Vị</th>
+                            <th scope="col">Tên Nông Trường</th>
                             <th scope="col">Trạng Thái</th>
                             {{-- <th scope="col">Thao tác</th> --}}
                         </tr>
@@ -146,7 +146,7 @@
                 <button type="button" class="btn btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                Bạn chắc chắn muốn xóa đơn vị đã chọn?
+                Bạn chắc chắn muốn xóa Nông Trường đã chọn?
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
@@ -208,7 +208,9 @@
                         data: 'check',
                         name: 'check',
                         orderable: false,
-                        searchable: false
+                        searchable: false,
+                        width: '40px'
+
                     },
                     
                     {
@@ -366,7 +368,7 @@
 
             Swal.fire({
                 title: "Xác nhận thay đổi",
-                text: "Bạn có chắc chắn muốn thay đổi trạng thái của đơn vị này?",
+                text: "Bạn có chắc chắn muốn thay đổi trạng thái của Nông Trường này?",
                 icon: "warning",
                 showCancelButton: true,
                 confirmButtonColor: "#3085d6",
@@ -393,7 +395,7 @@
                                 }
 
                                 Swal.fire({
-                                    text: 'Trạng thái của đơn vị đã được cập nhật.',
+                                    text: 'Trạng thái của Nông Trường đã được cập nhật.',
                                     icon: 'success',
                                     confirmButtonText: 'OK',
                                     timer: 3000
@@ -401,7 +403,7 @@
                             } else {
                                 Swal.fire({
                                     text: response.message ||
-                                        'Không thể thay đổi trạng thái của đơn vị.',
+                                        'Không thể thay đổi trạng thái của Nông Trường.',
                                     icon: 'error',
                                     confirmButtonText: 'OK',
                                     timer: 3000
