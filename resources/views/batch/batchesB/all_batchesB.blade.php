@@ -63,8 +63,8 @@
                 </div> --}}
 
 
-                <div class="col-md-5 col-8">
-                    <label class="text-dark fw-bold" for="date_filter"></label>
+                <div class="col-md-3 col-8">
+                    <label class="text-dark fw-bold" for="date_filter">Ngày</label>
                     <div class="datepicker-wrapper position-relative">
                         <input type="text" class="form-control datetimepicker datepicker" id="date_filter"
                             placeholder="dd/mm/yyyy" autocomplete="off" onkeydown="return false;" required>
@@ -72,6 +72,16 @@
                         <i class="fa fa-times-circle clear-icon"
                             style="position: absolute; right: 35px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #aaa;"></i>
                     </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <label class="text-dark fw-bold" for="factory_filter">Nhà máy</label>
+                    <select id="factory_filter" class="form-select">
+                        <option value="">-- Tất cả nhà máy --</option>
+                        @foreach ($factories as $factory)
+                        <option value="{{ $factory->id }}">{{ $factory->factory_name }}</option>
+                        @endforeach
+                    </select>
+
                 </div>
 
                 <!-- Nút lọc -->
@@ -108,6 +118,7 @@
                                 </th>
                                 {{-- <th scope="col">STT</th> --}}
                                 <th scope="col">Mã Lô</th>
+                                <th scope="col">Nhà Máy</th>
                                 <th scope="col">Mã QR</th>
                                 <th scope="col">Ngày Tạo</th>
                                 {{-- <th scope="col">Thao tác</th> --}}
@@ -122,6 +133,7 @@
                                 <th></th>
                                 {{-- <th scope="col">STT</th> --}}
                                 <th scope="col">Mã Lô</th>
+                                <th scope="col">Nhà Máy</th>
                                 <th scope="col">Mã QR</th>
                                 <th scope="col">Ngày Tạo</th>
                                 {{-- <th scope="col">Thao tác</th> --}}
@@ -169,6 +181,7 @@
                                     data: function(d) {
                                         // d.batch_code = $('#batch_code_filter').val(); 
                                         d.date_filter = $('#date_filter').val();
+                                        d.factory_filter = $('#factory_filter').val();
                                     }
                                 },
                                 columns: [{
@@ -189,6 +202,10 @@
                                     {
                                         data: 'batch_code',
                                         name: 'batch_code'
+                                    },
+                                    {
+                                        data: 'factory_name',
+                                        name: 'factory_name'
                                     },
                                     {
                                         data: 'qr_code',

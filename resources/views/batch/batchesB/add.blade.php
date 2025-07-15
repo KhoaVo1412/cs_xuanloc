@@ -21,26 +21,39 @@
                 <div class="card custom-card">
                     <div class="card-header justify-content-between d-flex">
                         <h5>Tạo Mã Lô</h5>
+                        {{-- <button type="submit" class="btn btn-primary">Lưu</button> --}}
                     </div>
                     <div class="card-body">
                         <!-- <div class="row modal-body gy-4"> -->
                         <div class="row">
-                            <div class="col-md-8">
+                            <div class="col-md-5">
+                                <label for="factory_id" class="form-label">Chọn Nhà Máy</label>
+                                <select name="factory_id" class="form-select" required>
+                                    <option value="">-- Chọn nhà máy --</option>
+                                    @foreach ($factories as $factory)
+                                    <option value="{{ $factory->id }}" {{ old('factory_id')==$factory->id ? 'selected' :
+                                        '' }}>
+                                        {{ $factory->factory_name }}
+                                    </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-6">
                                 <label for="batch" class="form-label">Mã Lô Hàng</label>
                                 <div class="d-flex">
                                     <input type="text" class="form-control" name="batch_codes"
                                         value="{{ old('batch_codes') }}"
-                                        placeholder="Nhập các mã lô, cách nhau bằng dấu phẩy"
-                                        style="margin: 0 20px 0 0;" />
-                                    <button type="submit" class="btn btn-primary">Lưu</button>
+                                        placeholder="Nhập các mã lô, cách nhau bằng dấu phẩy" />
                                 </div>
                             </div>
-
+                            <div class="col-md-1" style="position: relative; top: 33px;">
+                                <button type="submit" class="btn btn-primary">Lưu</button>
+                            </div>
                             {{-- <div class="col-md-4">
                                 <label for="received_date" class="form-label">Ngày Nhận</label>
                                 <input type="date" class="form-control" name="received_date" placeholder="Ngày Nhận">
                             </div> --}}
-                            <div class="notice my-4">
+                            <div class="notice my-5">
                                 <p> <strong style="color: #ff0000;">Chú Ý:</strong>
                                     <span>Nhập nhiều mã lô, cách nhau bằng dấu phẩy (Ví dụ: 251001, 251002)</span>
                                 </p>

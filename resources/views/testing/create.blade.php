@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="page-title my-3">
+<div class="page-title my-1">
     <div class="row">
         <div class="col-12 col-md-6 order-md-1 order-last">
             <h5></h5>
@@ -63,7 +63,7 @@
                     <!-- Icon bấm mở DatePicker -->
                 </div>
             </div>
-            <div class="form-group col-lg-6">
+            <div class="form-group col-lg-4">
                 <label for="contract_code" class="text-dark">Xếp Hạng</label>
                 <select class="form-control" id="rank" name="rank" required>
                     <option value="">-- Chọn Xếp Hạng --</option>
@@ -79,14 +79,20 @@
                 <label for="contract_code">Xếp Hạng</label>
                 <input type="text" class="form-control" id="rank" name="rank" required>
             </div> --}}
-
-            <div class="form-group col-lg-6">
+            <div class="form-group col-lg-4">
                 <label for="contract_type_id" class="text-dark">Loại Kiểm Nghiệm</label>
                 <select id="contract_type_id" name="type" class="form-select">
                     <option value="svr" {{ $batch->type == 'svr' ? 'selected' : '' }}>SVR</option>
                     {{-- <option value="latex" {{$batch->type == "latex" ? 'selected' : ''}}>latex</option> --}}
                     {{-- <option value="rss" {{$batch->type == "rss" ? 'selected' : ''}}>rss</option> --}}
                 </select>
+            </div>
+            <div class="form-group col-lg-4">
+                <label for="factory_id" class="text-dark">Nhà Máy</label>
+                <div class="form-group">
+                    <input type="text" class="form-control" name="factory_name" value="{{ $factory->factory_name }}"
+                        readonly>
+                </div>
             </div>
             <style>
                 #svr {

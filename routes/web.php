@@ -184,6 +184,7 @@ Route::middleware(['login'])->group(function () {
     Route::post('/update-batches/{id}', [BatchController::class, 'update'])->name('update-batches');
     Route::get('/delete-batches/{id}', [BatchController::class, 'destroy'])->name('delete-batches');
     Route::post('/batch/delete-multiple', [BatchController::class, 'deleteMultiple'])->name('batch.deleteMultiple');
+    Route::get('/get-batches-by-factory/{factoryId}', [BatchController::class, 'getBatchesByFactory']);
 
     Route::get('/batchesB', [BatchBController::class, 'index_b'])->name('batchesB.index');
     Route::get('/add-batchesB', [BatchBController::class, 'add_b'])->name('add-batchesB');

@@ -20,7 +20,6 @@
                 <div class="card custom-card">
                     <div class="card-header justify-content-between d-flex">
                         <h5>Chỉnh Sửa Kết Nối Nguyên Liệu</h5>
-                        {{-- <div class="card-title">Chỉnh sửa thông tin mã lô</div> --}}
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                             <button type="submit" class="btn btn-primary">Lưu</button>
                         </div>
@@ -29,6 +28,19 @@
                         <div id="batch-container">
                             <div class="row batchRow">
                                 <input type="hidden" name="batch_id" value="{{ $batch->id }}">
+                                <div class="col-md-7 form-group">
+                                    <label for="factory" class="text-black">Nhà Máy</label>
+                                    <select class="form-control" name="factory_id" disabled>
+                                        <option value="">Chọn Nhà Máy</option>
+                                        @foreach($factories as $factory)
+                                        <option value="{{ $factory->id }}" {{ $batch->factory_id == $factory->id ?
+                                            'selected' : '' }}>
+                                            {{ $factory->factory_name }}
+                                        </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
                                 <div class="col-md-6 form-group">
                                     <label for="batch_code" class="text-black">Mã Lô</label>
                                     <input type="text" class="form-control" name="batch_code"
@@ -36,8 +48,7 @@
                                 </div>
                                 <div class="col-md-4 form-group">
                                     <label for="date_sx" class="text-black">Ngày Sản Xuất</label>
-                                    {{-- <input type="date" class="form-control" name="date_sx"
-                                        value="{{ $batchIngredient->batch->date_sx }}" required> --}}
+
                                     <div class="datepicker-wrapper">
                                         <input type="text" class="form-control datetimepicker datepicker" name="date_sx"
                                             id="date_sx" placeholder="dd/mm/yyyy"
@@ -46,25 +57,9 @@
                                         <i class="fa fa-calendar calendar-icon" style="cursor: pointer;"></i>
                                     </div>
                                 </div>
-                                {{-- <div class="col-md-2 d-flex align-items-end form-group">
-                                    <button type="button" class="btn btn-success addBatchRow">+</button>
-                                    <button type="button" class="btn btn-danger removeBatchRow ms-2">-</button>
-                                </div> --}}
+
                             </div>
                         </div>
-
-                        {{-- <div class="row" style="padding-top:20px">
-                            <div class="col-md-6 form-group">
-                                <label for="batch_weight" class="text-black">Khối Lượng Lô Hàng (Tấn)</label>
-                                <input class="form-control" type="number" name="batch_weight" min="0" step="any"
-                                    value="{{ $batchIngredient->batch->batch_weight }}" required>
-                            </div>
-                            <div class="col-md-6 form-group">
-                                <label for="banh_weight" class="text-black">Khối Lượng Bành (Kg)</label>
-                                <input class="form-control" type="number" name="banh_weight" min="0" step="any"
-                                    value="{{ $batchIngredient->batch->banh_weight }}" required>
-                            </div>
-                        </div> --}}
                         <div class="row" style="padding-top:20px">
                             <div class="col-md-6 form-group">
                                 <label for="batch_weight" class="text-black">Khối Lượng Lô Hàng (Tấn)</label>
@@ -110,9 +105,6 @@
                                                 value="{{ $ingredient->ingredient->typeOfPus->name_pus }}" required>
                                         </td>
                                         <td>
-                                            {{-- <input type="text" class="form-control received-date-input"
-                                                name="received_dates[]"
-                                                value="{{ $ingredient->ingredient->received_date }}" required> --}}
                                             <input type="text" class="form-control received-date-input"
                                                 name="received_dates[]"
                                                 value="{{ \Carbon\Carbon::parse($ingredient->ingredient->received_date)->format('d/m/Y') }}">
@@ -162,12 +154,11 @@
                 $(document).ready(function() {
                         const ingredientsData = @json($ingredients);
                         const productionDate = new Date("{{ $batch->date_sx }}");
+                        const selectedFactoryId = "{{ $batch->factory_id }}";
                         let deletedIngredientIds = [];
-
                         function normalizeString(str) {
                             return str ? str.normalize('NFC').toLowerCase() : '';
                         }
-
                         function setupAutocomplete(input, suggestions, callback) {
                             input.autocomplete({
                                 source: suggestions,
@@ -179,7 +170,6 @@
                                 }
                             }).autocomplete('search', '');
                         }
-
                         function formatDateToDDMMYYYY(dateStr) {
                             if (!dateStr) return '';
                             const date = new Date(dateStr);
@@ -189,12 +179,14 @@
                             const year = date.getFullYear();
                             return `${day}/${month}/${year}`;
                         }
-
                         function parseDateFromDDMMYYYY(dateStr) {
                             if (!dateStr) return null;
                             const parts = dateStr.split('/');
                             if (parts.length !== 3) return null;
                             return new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
+                        }
+                        function filterIngredientsByFactory(factoryId) {
+                            return ingredientsData.filter(ingredient => ingredient.factory_id === factoryId);
                         }
 
                         function fillRowData(row, changedField) {
@@ -202,24 +194,24 @@
                             const selectedDate = row.find('.received-date-input').val();
                             const selectedFarm = normalizeString(row.find('.farm-input').val());
                             const selectedVehicle = normalizeString(row.find('.vehicle-input').val());
+
+                            const filteredIngredients = filterIngredientsByFactory(selectedFactoryId);
                             if (changedField === 'typeOfPus' && selectedTypeOfPus) {
                                 if (!row.find('.received-date-input').val()) {
-                                    const dateSuggestions = ingredientsData
-                                        .filter(ingredient => normalizeString(ingredient.type_of_pus?.name_pus) ===
-                                            selectedTypeOfPus)
+                                    const dateSuggestions = filteredIngredients
+                                        .filter(ingredient => normalizeString(ingredient.type_of_pus?.name_pus) === selectedTypeOfPus)
                                         .map(ingredient => formatDateToDDMMYYYY(ingredient.received_date))
                                         .filter((v, i, a) => a.indexOf(v) === i);
                                     setupAutocomplete(row.find('.received-date-input'), dateSuggestions);
                                 }
                             }
+
                             if (changedField === 'receivedDate' && selectedDate) {
                                 if (!row.find('.farm-input').val()) {
-                                    const farmSuggestions = ingredientsData
-                                        .filter(ingredient => normalizeString(ingredient.type_of_pus?.name_pus) ===
-                                            selectedTypeOfPus &&
+                                    const farmSuggestions = filteredIngredients
+                                        .filter(ingredient => normalizeString(ingredient.type_of_pus?.name_pus) === selectedTypeOfPus &&
                                             formatDateToDDMMYYYY(ingredient.received_date) === selectedDate)
-                                        .map(ingredient =>
-                                            `${ingredient.farm?.farm_name} - ${ingredient.farm?.unit_relation?.unit_name}`)
+                                        .map(ingredient => `${ingredient.farm?.farm_name} - ${ingredient.farm?.unit_relation?.unit_name}`)
                                         .filter((v, i, a) => a.indexOf(v) === i);
                                     setupAutocomplete(row.find('.farm-input'), farmSuggestions);
                                 }
@@ -227,27 +219,22 @@
 
                             if (changedField === 'farm' && selectedFarm) {
                                 if (!row.find('.vehicle-input').val()) {
-                                    const vehicleSuggestions = ingredientsData
-                                        .filter(ingredient => normalizeString(ingredient.type_of_pus?.name_pus) ===
-                                            selectedTypeOfPus &&
+                                    const vehicleSuggestions = filteredIngredients
+                                        .filter(ingredient => normalizeString(ingredient.type_of_pus?.name_pus) === selectedTypeOfPus &&
                                             formatDateToDDMMYYYY(ingredient.received_date) === selectedDate &&
-                                            normalizeString(
-                                                `${ingredient.farm?.farm_name} - ${ingredient.farm?.unit_relation?.unit_name}`
-                                            ) === normalizeString(row.find('.farm-input').data('fullFarm')))
+                                            normalizeString(`${ingredient.farm?.farm_name} - ${ingredient.farm?.unit_relation?.unit_name}`) === selectedFarm)
                                         .map(ingredient => ingredient.vehicle?.vehicle_number)
                                         .filter((v, i, a) => a.indexOf(v) === i);
                                     setupAutocomplete(row.find('.vehicle-input'), vehicleSuggestions);
                                 }
                             }
+
                             if (changedField === 'vehicle' && selectedVehicle) {
                                 if (!row.find('.trip-input').val()) {
-                                    const tripSuggestions = ingredientsData
-                                        .filter(ingredient => normalizeString(ingredient.type_of_pus?.name_pus) ===
-                                            selectedTypeOfPus &&
+                                    const tripSuggestions = filteredIngredients
+                                        .filter(ingredient => normalizeString(ingredient.type_of_pus?.name_pus) === selectedTypeOfPus &&
                                             formatDateToDDMMYYYY(ingredient.received_date) === selectedDate &&
-                                            normalizeString(
-                                                `${ingredient.farm?.farm_name} - ${ingredient.farm?.unit_relation?.unit_name}`
-                                            ) === normalizeString(row.find('.farm-input').data('fullFarm')) &&
+                                            normalizeString(`${ingredient.farm?.farm_name} - ${ingredient.farm?.unit_relation?.unit_name}`) === selectedFarm &&
                                             normalizeString(ingredient.vehicle?.vehicle_number) === selectedVehicle)
                                         .map(ingredient => ingredient.trip)
                                         .filter((v, i, a) => a.indexOf(v) === i);
@@ -356,50 +343,6 @@
                                 fillRowData(row, 'receivedDate');
                             });
                         });
-                        // $(document).on('focus', '.farm-input', function() {
-                        //     const input = $(this);
-                        //     const row = input.closest('tr');
-                        //     const selectedTypeOfPus = normalizeString(row.find('.typeOfPus-input').val());
-                        //     const selectedDate = row.find('.received-date-input').val();
-
-                        //     const suggestions = ingredientsData
-                        //         .filter(ingredient =>
-                        //             normalizeString(ingredient.type_of_pus?.name_pus) === selectedTypeOfPus &&
-                        //             formatDateToDDMMYYYY(ingredient.received_date) === selectedDate)
-                        //         .map(ingredient =>
-                        //             `${ingredient.farm?.farm_name} - ${ingredient.farm?.unit_relation?.unit_name}`)
-                        //         .filter((v, i, a) => a.indexOf(v) === i);
-
-                        //     setupAutocomplete(input, suggestions, function(selectedFarm) {
-                        //         const [selectedFarmName, selectedUnitName] = selectedFarm.split(' - ');
-                        //         row.find('.farm-input').val(selectedFarmName);
-                        //         row.find('.farm-input').data('fullFarm', selectedFarm);
-                        //         row.find('.vehicle-input').val('');
-                        //         row.find('.trip-input').val('');
-                        //         fillRowData(row, 'farm');
-                        //     });
-                        // });
-                        // $(document).on('focus', '.vehicle-input', function() {
-                        //     const input = $(this);
-                        //     const row = input.closest('tr');
-                        //     const selectedTypeOfPus = normalizeString(row.find('.typeOfPus-input').val());
-                        //     const selectedDate = row.find('.received-date-input').val();
-                        //     const fullFarm = row.find('.farm-input').data('fullFarm');
-                        //     const suggestions = ingredientsData
-                        //         .filter(ingredient =>
-                        //             normalizeString(ingredient.type_of_pus?.name_pus) === selectedTypeOfPus &&
-                        //             formatDateToDDMMYYYY(ingredient.received_date) === selectedDate &&
-                        //             normalizeString(
-                        //                 `${ingredient.farm?.farm_name} - ${ingredient.farm?.unit_relation?.unit_name}`
-                        //             ) === normalizeString(fullFarm))
-                        //         .map(ingredient => ingredient.vehicle?.vehicle_number)
-                        //         .filter((v, i, a) => a.indexOf(v) === i);
-
-                        //     setupAutocomplete(input, suggestions, function(selectedVehicle) {
-                        //         row.find('.trip-input').val('');
-                        //         fillRowData(row, 'vehicle');
-                        //     });
-                        // });
                         $(document).on('focus', '.farm-input', function() {
                             const input = $(this);
                             const row = input.closest('tr');
@@ -424,7 +367,6 @@
                                 row.find('.farm-input').data('fullFarm', selectedFarm);
                                 row.find('.vehicle-input').val('');
                                 row.find('.trip-input').val('');
-
                                 const matchedIngredient = ingredientsData.find(ingredient => {
                                     console.log("ingredient", ingredient)
                                     return (
@@ -437,13 +379,11 @@
                                         selectedDate
                                     );
                                 });
-
                                 if (matchedIngredient) {
                                     row.find('input[name="farm_ids[]"]').val(matchedIngredient.farm.id);
                                 } else {
                                     row.find('input[name="farm_ids[]"]').val('');
                                 }
-
                                 fillRowData(row, 'farm');
                             });
                         });
@@ -453,7 +393,6 @@
                             const selectedTypeOfPus = normalizeString(row.find('.typeOfPus-input').val());
                             const selectedDate = row.find('.received-date-input').val();
                             const fullFarm = row.find('.farm-input').data('fullFarm'); // Lấy thông tin đầy đủ của nông trường
-
                             const suggestions = ingredientsData
                                 .filter(ingredient =>
                                     normalizeString(ingredient.type_of_pus?.name_pus) === selectedTypeOfPus &&
@@ -494,7 +433,6 @@
                         $('#addRow').on('click', function() {
                             const lastRow = $('#detailsTable tbody tr').last();
                             const typeOfPusValue = lastRow.find('.typeOfPus-input').val().trim();
-
                             const isLastRowComplete = lastRow.find('.typeOfPus-input').val() &&
                                 lastRow.find('.received-date-input').val() &&
                                 lastRow.find('.farm-input').val() &&
@@ -510,6 +448,7 @@
                                 });
                                 return;
                             }
+
                             const newRow = `
                                 <tr>
                                     <td><input type="text" class="form-control typeOfPus-input read-only-locked" name="type_of_pus_ids[]" placeholder="Chọn Loại Mủ" value="${typeOfPusValue}" required></td>
@@ -527,12 +466,10 @@
                             const newRowElement = $('#detailsTable tbody tr').last();
                             fillRowData(newRowElement, 'typeOfPus');
                         });
-
                         $(document).on('click', '.deleteRow', function() {
                             const row = $(this).closest('tr');
                             const rowIndex = row.index();
                             const rowCount = $('#detailsTable tbody tr').length;
-
                             if (rowIndex === 0) {
                                 Swal.fire({
                                     icon: 'info',
@@ -542,7 +479,6 @@
                                 });
                                 return;
                             }
-
                             if (rowCount > 1) {
                                 Swal.fire({
                                     title: 'Bạn có chắc muốn xóa dòng này?',
@@ -559,7 +495,6 @@
                                                 `<input type="hidden" name="deleted_ingredient_ids[]" value="${ingredientId}">`
                                             );
                                         }
-
                                         row.remove();
                                         Swal.fire({
                                             icon: 'success',
@@ -579,7 +514,6 @@
                                 });
                             }
                         });
-
                         $('#detailsTable tbody tr').each(function() {
                             const row = $(this);
                             const ingredientId = row.find('input[name="ingredient_ids[]"]').val();
@@ -588,7 +522,6 @@
                             }
                             checkForDuplicateIngredient(row);
                         });
-
                         $('form').on('submit', function(e) {
                             let hasDuplicates = false;
                             $('#detailsTable tbody tr').each(function() {
@@ -608,7 +541,6 @@
                         });
                     });
             </script>
-
         </div>
     </div>
 </section>
@@ -628,12 +560,6 @@
                 minimumResultsForSearch: 0,
                 width: '100%',
             });
-            // $('#vehicle_number').select2({
-            //     placeholder: "Chọn Xe",
-            //     allowClear: true,
-            //     minimumResultsForSearch: 0,
-            //     width: '100%',
-            // });
         });
 </script>
 <script>
@@ -715,25 +641,16 @@
                     
                 </div>
             `;
-            // dong 688688
-            // <div class="col-md-2 d-flex align-items-end form-group">
-            //             <button type="button" class="btn btn-success addBatchRow">+</button>
-            //             <button type="button" class="btn btn-danger removeBatchRow ms-2">-</button>
-            //         </div>
             container.append(newRow);
-
-            // Khởi tạo lại select2 và datetimepicker cho dòng mới
             $(`#date_sx_${newId}`).closest('.batchRow').find('.select2').select2({
                 language: "vi",
-                placeholder: "Chọn giá trị",
+                placeholder: "Chọn nhà máy",
                 allowClear: true,
                 width: '100%'
             });
             initDateTimePicker(`#date_sx_${newId}`);
-            refreshBatchDropdowns(); // Làm mới dropdown sau khi thêm dòng
+            refreshBatchDropdowns();
         });
-
-        // Remove batch row
         $(document).on('click', '.removeBatchRow', function() {
             const row = $(this).closest('.batchRow');
             const rowCount = $('#batch-container .batchRow').length;
@@ -767,8 +684,6 @@
                 });
             }
         });
-
-        // Làm mới dropdown mỗi khi chọn thay đổi
         $(document).on('change', 'select[name="batch_code[]"]', function() {
             const $this = $(this);
             setTimeout(() => {

@@ -2,7 +2,7 @@
 
 
 @section('content')
-<div class="page-title my-3">
+<div class="page-title my-1">
     <div class="row">
         <div class="col-12 col-md-6 order-md-1 order-last">
             <h5 class="padding">Lô Đã Kiểm Nghiệm</h5>
@@ -29,7 +29,7 @@
             <div class="row align-items-end">
 
 
-                <div class="col-md-3 mb-2">
+                <div class="col-md-2 mb-2">
                     <label class="text-dark fw-bold">Tháng Kiểm Nghiệm</label>
                     <div class="form-group mb-0">
                         <select class="form-select" name="month" id="month">
@@ -38,7 +38,7 @@
                     </div>
                 </div>
 
-                <div class="col-md-3 mb-2">
+                <div class="col-md-2 mb-2">
                     <label class="text-dark fw-bold">Năm Kiểm Nghiệm</label>
                     <div class="form-group mb-0">
                         <select class="form-select" name="year" id="year">
@@ -47,7 +47,7 @@
                     </div>
                 </div>
 
-                <div class="col-md-3 mb-2">
+                <div class="col-md-2 mb-2">
                     <label class="text-dark fw-bold">Hạng</label>
                     <div class="form-group mb-0">
                         <select class="form-select" name="rank" id="rank">
@@ -66,6 +66,25 @@
                                                                                                                         <option value="3L">3L</option>
                                                                                                                         <option value="RSS3">RSS3</option>
                                                                                                                     </select> -->
+                    </div>
+                </div>
+                <div class="col-md-3 mb-2">
+                    <label class="text-dark fw-bold">Nhà Máy</label>
+                    <div class="form-group mb-0">
+                        {{-- <select class="form-select" name="factory_id" id="factory_id">
+                            <option value="">-- Chọn Nhà Máy --</option>
+                            @foreach ($factories as $val)
+                            <option value="{{ $val->id }}" {{ old('factory_id')==$val->id ? 'selected' : '' }}>
+                                {{ $val->factory_name }}
+                            </option>
+                            @endforeach
+                        </select> --}}
+                        <select id="factory-filter" class="form-control">
+                            <option value="">Chọn nhà máy</option>
+                            @foreach($factories as $factory)
+                            <option value="{{ $factory->id }}">{{ $factory->factory_name }}</option>
+                            @endforeach
+                        </select>
                     </div>
                 </div>
 
@@ -186,7 +205,7 @@
                                             <th>STT</th>
                                             <th>Mã Lô Hàng</th>
                                             <th>Loại mủ</th>
-                                            <!-- <th>Nhà máy</th> -->
+                                            <th>Nhà Máy</th>
                                             <!-- <th>Ngày sản xuất</th> -->
                                             <th>Ngày Gửi Mẫu</th>
                                             <th>Ngày Kiểm Nghiệm</th>
@@ -203,7 +222,7 @@
                                             <th>STT</th>
                                             <th>Mã Lô Hàng</th>
                                             <th>Loại mũ</th>
-                                            <!-- <th>Nhà máy</th> -->
+                                            <th>Nhà Máy</th>
                                             <!-- <th>Ngày sản xuất</th> -->
                                             <th>Ngày Gửi Mẫu</th>
                                             <th>Ngày Kiểm Nghiệm</th>
@@ -237,9 +256,11 @@
                         // d.day = $("#day").val();
                         d.month = $("#month").val();
                         d.year = $("#year").val();
-                        // d.factory = $("#factory").val();
+                        d.factory_id = $("#factory_id").val();
                         d.rank = $("#rank").val();
                         // d.type = $("#type").val();
+                        d.factory_id = $('#factory-filter').val(); 
+
                         console.log(d);
                     },
                 },
@@ -292,10 +313,10 @@
                         data: 'loai_mu',
                         name: 'loai_mu'
                     },
-                    // {
-                    //     data: 'factory',
-                    //     name: 'factory'
-                    // },
+                    {
+                        data: 'factory_name',
+                        name: 'factory_name'
+                    },
                     {
                         data: 'date_sx',
                         name: 'date_sx'

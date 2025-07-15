@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\ActionHistory;
 use App\Models\Batch;
+use App\Models\Factory;
 use App\Models\TestingResult;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,18 +17,16 @@ class TestingResultController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $ranks = TestingResult::whereHas('batch', function ($query) {
-            $query->where('status', 1);
-        })->select('rank')->distinct()->pluck('rank');
-        // dd($ranks);
-        return view("testing.index", compact('ranks'));
-    }
+        $factories = Factory::all();
 
-    public function indexUntested()
-    {
-        return view("testing.untested");
+        $query = TestingResult::whereHas('batch', function ($query) {
+            $query->where('status', 1);
+        });
+        $ranks = $query->select('rank')->distinct()->pluck('rank');
+
+        return view("testing.index", compact('ranks', 'factories'));
     }
 
     public function getData(Request $request)
@@ -42,7 +41,9 @@ class TestingResultController extends Controller
         //         $query->where('receiving_factory', $request->factory);
         //     });
         // }
-
+        if ($request->has('factory_id') && $request->factory_id) {
+            $contracts->where('factory_id', $request->factory_id);
+        }
         if ($request->has('rank') && $request->rank) {
             $contracts->whereHas('testingResult', function ($query) use ($request) {
                 $query->where('rank', $request->rank);
@@ -87,6 +88,9 @@ class TestingResultController extends Controller
             ->addColumn('date_sx', function ($row) {
                 return $row->date_sx ? \Carbon\Carbon::parse($row->date_sx)->format('d/m/Y') : "";
             })
+            ->addColumn('factory_name', function ($row) {
+                return $row->factory?->factory_name ?? '<span class="text-muted">Chưa có</span>';
+            })
             ->addColumn('ngay_gui_mau', function ($row) {
                 return $row->testingResult ? \Carbon\Carbon::parse($row->testingResult->ngay_gui_mau)->format('d/m/Y') : "";
             })
@@ -113,24 +117,16 @@ class TestingResultController extends Controller
             })
             ->make(true);
     }
-
+    public function indexUntested()
+    {
+        $factories = Factory::all();
+        return view("testing.untested", compact('factories'));
+    }
     public function getDataUntested(Request $request)
     {
-
-        // dd($request->all());
-        // $contracts = Batch::where('status', 0);
         $contracts = Batch::with('ingredients')
-            ->where('status', 0) // Lô chưa kiểm nghiệm
-            ->whereHas('ingredients'); // Có nguyên liệu gắn vào
-        // ->get();
-
-
-        // if ($request->has('factory') && $request->factory) {
-        //     $contracts->whereHas('ingredients', function ($query) use ($request) {
-        //         $query->where('receiving_factory', $request->factory);
-        //     });
-        // }
-
+            ->where('status', 0)
+            ->whereHas('ingredients');
         if ($request->has('day') || $request->has('month') || $request->has('year')) {
             $contracts->where(function ($query) use ($request) {
                 if ($request->has('year') && $request->year) {
@@ -144,7 +140,9 @@ class TestingResultController extends Controller
                 }
             });
         }
-
+        if ($request->has('factory_id') && $request->factory_id) {
+            $contracts->where('factory_id', $request->factory_id);
+        }
         $result = $contracts->get();
 
         return DataTables::of($result)
@@ -155,16 +153,13 @@ class TestingResultController extends Controller
             })
             ->addColumn('loai_mu', function ($row) {
 
-                // dd($row->ingredients);
                 return $row->ingredients?->first()->typeOfPus?->name_pus ?? '';
+            })
+            ->addColumn('factory_name', function ($row) {
+                return $row->factory?->factory_name ?? '<span class="text-muted">Chưa có</span>';
             })
             ->addColumn('date_sx', function ($row) {
                 return $row->date_sx ? \Carbon\Carbon::parse($row->date_sx)->format('d/m/Y') : "";
-            })
-            ->addColumn('factory', function ($row) {
-
-                // dd($row->ingredients);
-                return $row->ingredients->first()->receiving_factory ?? 'N/A';
             })
             ->addColumn('actions', function ($row) {
                 return '
@@ -322,7 +317,8 @@ class TestingResultController extends Controller
     public function showun(string $id)
     {
         $batch = Batch::findOrFail($id);
-        return view("testing.create", compact('batch'));
+        $factory = $batch->factory;
+        return view("testing.create", compact('batch', 'factory'));
     }
 
     /**
@@ -331,7 +327,8 @@ class TestingResultController extends Controller
     public function edit(string $id)
     {
         $batch = Batch::findOrFail($id);
-        return view("testing.edit", compact('batch'));
+        $factory = $batch->factory;
+        return view("testing.edit", compact('batch', 'factory'));
     }
 
     /**

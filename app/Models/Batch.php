@@ -10,6 +10,7 @@ class Batch extends Model
     use HasFactory;
     protected $table = "batches";
     protected $fillable = [
+        'factory_id',
         'batch_code',
         'date_sx',
         'received_date',
@@ -35,5 +36,9 @@ class Batch extends Model
     public function orderExport()
     {
         return $this->belongsTo(OrderExport::class, 'order_export_id');
+    }
+    public function factory()
+    {
+        return $this->belongsTo(Factory::class, 'factory_id');
     }
 }

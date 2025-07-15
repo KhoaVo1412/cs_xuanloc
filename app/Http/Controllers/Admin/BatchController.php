@@ -28,6 +28,7 @@ class BatchController extends Controller
         $userFarms = $user->farms()->with('Unrelation')->get();
         $farmName = $userFarms->isEmpty() ? Farm::all() : $userFarms;
         // dd($farmName);
+
         $query = BatchIngredients::leftJoin('batches', 'batch_ingredient.batch_id', '=', 'batches.id')
             ->leftJoin('ingredients', 'batch_ingredient.ingredient_id', '=', 'ingredients.id')
             ->leftJoin('vehicles', 'ingredients.vehicle_number_id', '=', 'vehicles.id')
@@ -227,13 +228,24 @@ class BatchController extends Controller
             //     $query->select('ingredient_id')->from('batch_ingredient');
             // })
             ->get();
+        $factories = Factory::all();
         $batchIdsWithIngredients = DB::table('batch_ingredient')->pluck('batch_id')->toArray();
 
         $batches = Batch::whereNotIn('id', $batchIdsWithIngredients)->get();
 
         // $ingredients = Ingredient::with('typeOfPus', 'vehicle', 'farm')->get();
         // dd($batchIdsWithIngredients, $batches);
-        return view('batch.batches_detail.add', compact('batchIdsWithIngredients', 'ingredients', 'batches'));
+        return view('batch.batches_detail.add', compact('batchIdsWithIngredients', 'ingredients', 'batches', 'factories'));
+    }
+    public function getBatchesByFactory($factoryId)
+    {
+        $batchIdsWithIngredients = DB::table('batch_ingredient')->pluck('batch_id')->toArray();
+
+        $batches = Batch::where('factory_id', $factoryId)
+            ->whereNotIn('id', $batchIdsWithIngredients)
+            ->get();
+
+        return response()->json(['batches' => $batches]);
     }
     private function getTypeOfPusId($typeOfPusName)
     {
@@ -257,96 +269,17 @@ class BatchController extends Controller
         $factory = Factory::where('factory_name', $factoryName)->firstOrFail();
         return $factory->id;
     }
-    // public function save(Request $request)
-    // {
-    //     try {
-    //         $today = Carbon::today()->startOfDay();
-    //         $validatedData = $request->validate([
-    //             'batch_code.*' => 'required|exists:batches,id',
-    //             'date_sx.*' => 'required|date_format:d/m/Y',
-    //             'batch_weight' => 'required|numeric',
-    //             'banh_weight' => 'required|numeric',
-    //             'batches.*.ingredients.*.type_of_pus' => 'required|string',
-    //             'batches.*.ingredients.*.received_date' => 'required|date_format:d/m/Y',
-    //             'batches.*.ingredients.*.vehicle' => 'required|string',
-    //             'batches.*.ingredients.*.trip' => 'required|string',
-    //         ]);
-
-    //         $batchCodes = $request->input('batch_code');
-    //         $dates = array_map(function ($date) {
-    //             return Carbon::createFromFormat('d/m/Y', $date)->format('Y-m-d');
-    //         }, $request->input('date_sx'));
-    //         $batchesData = $request->input('batches');
-
-    //         foreach ($dates as $index => $date) {
-    //             if (Carbon::parse($date)->startOfDay()->greaterThan($today)) {
-    //                 return back()->with(['error' => "Ngày sản xuất không được lớn hơn ngày hiện tại."]);
-    //             }
-    //         }
-    //         foreach ($batchCodes as $index => $batchId) {
-    //             $batch = Batch::updateOrCreate(
-    //                 ['id' => $batchId],
-    //                 [
-    //                     'date_sx' => $dates[$index],
-    //                     'batch_weight' => $request->batch_weight,
-    //                     'banh_weight' => $request->banh_weight,
-    //                 ]
-    //             );
-
-    //             // Process ingredients for this batch
-    //             if (isset($batchesData[$index]['ingredients'])) {
-    //                 foreach ($batchesData[$index]['ingredients'] as $ingredientIndex => $ingredientData) {
-    //                     // Get the type of pus ID from the provided type of pus name
-    //                     $typeOfPusId = $this->getTypeOfPusId($ingredientData['type_of_pus']);
-
-    //                     // Get the vehicle ID by searching the vehicle number
-    //                     $vehicleId = $this->getVehicleId($ingredientData['vehicle']);
-
-    //                     // Get trip value from the input
-    //                     $trip = $ingredientData['trip'];
-
-    //                     // Create or find the ingredient
-    //                     $ingredient = Ingredient::firstOrCreate([
-    //                         'type_of_pus_id' => $typeOfPusId,
-    //                         'received_date' => Carbon::createFromFormat('d/m/Y', $ingredientData['received_date'])->format('Y-m-d'),
-    //                         'vehicle_number_id' => $vehicleId,
-    //                         'trip' => $trip,
-    //                     ]);
-
-    //                     // Attach ingredient to batch (without detaching previous associations)
-    //                     $batch->ingredients()->syncWithoutDetaching([$ingredient->id]);
-    //                 }
-    //             } else {
-    //                 Log::warning("Không tìm thấy nguyên liệu cho batch index: $index");
-    //             }
-    //         }
-
-    //         // Return success message after processing
-    //         return redirect()->route('batches.index')->with('message', 'Kết nối nguyên liệu thành công!');
-    //     } catch (\Throwable $th) {
-    //         // Catch any exception and return failure message
-    //         return redirect()->back()->with('error', 'Kết nối nguyên liệu thất bại!')->with('errorDetails', $th->getMessage());
-    //     }
-    // }
     public function save(Request $request)
     {
         try {
-            // $today = Carbon::now('Asia/Ho_Chi_Minh')->startOfDay();
-
             $today = Carbon::today()->startOfDay();
 
             $batchCodes = $request->input('batch_code');
-            // $dates = $request->input('date_sx');
             $dates = array_map(function ($date) {
                 return Carbon::createFromFormat('d/m/Y', $date)->format('Y-m-d');
             }, $request->input('date_sx'));
             $batchesData = $request->input('batches');
-            // dd($batchCodes);
             foreach ($dates as $index => $date) {
-                // $parsedDate = Carbon::parse($date, 'Asia/Ho_Chi_Minh')->startOfDay();
-                // if ($parsedDate->greaterThan($today)) {
-                //     return back()->with(['error' => "Ngày sản xuất không được lớn hơn ngày hiện tại."])->withInput();
-                // }
                 if (Carbon::parse($date)->startOfDay()->greaterThan($today)) {
                     return back()->with(['error' => "Ngày sản xuất không được lớn hơn ngày hiện tại."])->withInput();
                 }
@@ -360,15 +293,10 @@ class BatchController extends Controller
                         'banh_weight' => $request->banh_weight,
                     ]
                 );
-                // dd($batchesData[0]['ingredients']);
                 if (isset($batchesData[0]['ingredients'])) {
                     foreach ($batchesData[0]['ingredients'] as $ingredientIndex => $ingredientData) {
                         $typeOfPusId = $this->getTypeOfPusId($ingredientData['type_of_pus']);
-                        // $farmId = $this->getFarmId($ingredientData['farm']);
-                        // dd($ingredientData);
                         $vehicleId = $this->getVehicleId($ingredientData['vehicle']);
-                        // $factoryId = $this->getFactoryId($ingredientData['received_factory']);
-
                         $ingredient = Ingredient::where([
                             ['type_of_pus_id', $typeOfPusId],
                             ['received_date', Carbon::createFromFormat('d/m/Y', $ingredientData['received_date'])->format('Y-m-d')],
@@ -436,18 +364,24 @@ class BatchController extends Controller
     // }
     public function edit($id)
     {
-        $batch = Batch::with(['ingredients.typeOfPus', 'ingredients.vehicle', 'ingredients.farm'])
+        $batch = Batch::with(['ingredients.typeOfPus', 'ingredients.vehicle', 'ingredients.farm', 'factory'])
             ->findOrFail($id);
 
         $relatedIngredients = BatchIngredients::with(['ingredient.typeOfPus', 'ingredient.vehicle', 'ingredient.farm'])
             ->where('batch_id', $batch->id)
             ->get();
+        // $ingredients = Ingredient::with('typeOfPus', 'vehicle', 'farm.unitRelation')
+        //     // ->whereNotIn('id', function ($query) {
+        //     //     $query->select('ingredient_id')->from('batch_ingredient');
+        //     // })
+        //     ->get();
         $ingredients = Ingredient::with('typeOfPus', 'vehicle', 'farm.unitRelation')
-            // ->whereNotIn('id', function ($query) {
-            //     $query->select('ingredient_id')->from('batch_ingredient');
-            // })
+            ->where('received_factory_id', $batch->factory_id) // Filter by selected factory
+            ->whereNotIn('id', function ($query) use ($batch) {
+                $query->select('ingredient_id')->from('batch_ingredient')->where('batch_id', $batch->id);
+            })
             ->get();
-
+        $factories = Factory::all();
         $vehicles = Vehicle::all();
         $farms = Farm::all();
         $typeOfPus = TypeOfPus::all();
@@ -463,7 +397,8 @@ class BatchController extends Controller
             'farms',
             'typeOfPus',
             'batches',
-            'batchIdsWithIngredients'
+            'batchIdsWithIngredients',
+            'factories'
         ));
     }
 

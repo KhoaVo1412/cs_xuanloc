@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\ActionHistory;
 use App\Models\Batch;
+use App\Models\Factory;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -21,12 +22,18 @@ class BatchBController extends Controller
 {
     public function index_b(Request $request)
     {
-        $query = Batch::query()->orderBy('id', 'desc');
+        $query = Batch::query()->with('factory')->orderBy('id', 'desc');
 
         if ($request->filled('date_filter')) {
             $date = Carbon::createFromFormat('d/m/Y', $request->date_filter)->format('Y-m-d');
             $query->whereDate('created_at', $date);
         }
+        $factories = Factory::all();
+        if ($request->filled('factory_filter')) {
+            $query->where('factory_id', $request->factory_filter);
+        }
+
+
 
         if ($request->ajax()) {
             $all_batchesB = $query->get();
@@ -42,6 +49,9 @@ class BatchBController extends Controller
                 })
                 ->addColumn('batch_code', function ($row) {
                     return '<a href="/edit-batchesB/' . $row->id . '">' . $row->batch_code . '</a>';
+                })
+                ->addColumn('factory_name', function ($row) {
+                    return $row->factory?->factory_name ?? '<span class="text-muted">Chưa có</span>';
                 })
                 ->addColumn('qr_code', function ($row) {
                     if ($row->qr_code) {
@@ -84,16 +94,18 @@ class BatchBController extends Controller
                     ';
                     return $action;
                 })
-                ->rawColumns(['check', 'stt', 'batch_code', 'qr_code', 'created_at', 'action'])
+                ->rawColumns(['check', 'stt', 'batch_code', 'factory_name', 'qr_code', 'created_at', 'action'])
                 ->make(true);
         }
 
-        return view('batch.batchesB.all_batchesB');
+        return view('batch.batchesB.all_batchesB', compact('factories'));
     }
 
     public function add_b(Request $request)
     {
-        return view('batch.batchesB.add');
+        $factories = Factory::all();
+
+        return view('batch.batchesB.add', compact('factories'));
     }
 
     // public function save_b(Request $request)
@@ -176,10 +188,13 @@ class BatchBController extends Controller
     // }
     public function save_b(Request $request)
     {
+        // dd($request->all());
         try {
             $request->validate([
                 'batch_codes' => 'required|string',
+                'factory_id' => 'required|exists:factory,id',
             ]);
+            $factoryId = $request->input('factory_id');
             $batch_codes = preg_split('/[\s,]+/', $request->batch_codes);
             $batch_codes = array_map('trim', array_filter($batch_codes));
             $unique_batch_codes = array_unique($batch_codes);
@@ -227,6 +242,7 @@ class BatchBController extends Controller
             foreach ($newBatchCodes as $batch_code) {
                 $batch = Batch::create([
                     'batch_code' => $batch_code,
+                    'factory_id' => $factoryId,
                 ]);
                 $qrCodePath = 'qr_codes/' . $batch->id . '.png';
                 $path = public_path($qrCodePath);
@@ -238,6 +254,7 @@ class BatchBController extends Controller
                     'qr_code' => $qrCodePath,
                 ]);
             }
+            // dd($batch);
             ActionHistory::create([
                 'user_id' => Auth::id(),
                 'action_type' => 'Tạo',
@@ -255,6 +272,7 @@ class BatchBController extends Controller
     public function edit_b($id)
     {
         $batchesB = Batch::find($id);
+        $factories = Factory::all();
         if ($batchesB->ingredients()->exists()) {
             return redirect()->back()->with('error', 'Mã lô hàng đã được kết nối thông tin nguyên liệu, bạn không được phép chỉnh sửa.');
         }
@@ -266,7 +284,7 @@ class BatchBController extends Controller
         if ($batchesB->status == 1) {
             return redirect()->back()->with('error', 'Không thể cập nhật vì lô hàng đã kiểm nghiệm.');
         }
-        return view('batch.batchesB.edit', compact('batchesB'));
+        return view('batch.batchesB.edit', compact('batchesB', 'factories'));
     }
     public function update_b(Request $request, $id)
     {
@@ -274,6 +292,7 @@ class BatchBController extends Controller
             // Validate the input
             $request->validate([
                 'batch_code' => 'required|string',
+                'factory_id' => 'required|exists:factory,id',
             ]);
 
             $batch_codes = preg_split('/[\s,]+/', $request->batch_code);
@@ -340,6 +359,7 @@ class BatchBController extends Controller
             QrCode::format('png')->size(200)->generate($batch_codes[0], $path);
 
             $batch->update([
+                'factory_id' => $request->factory_id,
                 'qr_code' => $qrCodePath,
             ]);
             ActionHistory::create([

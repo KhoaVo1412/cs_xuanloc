@@ -56,6 +56,25 @@
                     </select>
                 </div>
             </div>
+            <div class="col-md-3 mb-2">
+                <label class="text-dark fw-bold">Nhà Máy</label>
+                <div class="form-group mb-2">
+                    {{-- <select class="form-select" name="factory_id" id="factory_id">
+                        <option value="">-- Chọn Nhà Máy --</option>
+                        @foreach ($factories as $val)
+                        <option value="{{ $val->id }}" {{ old('factory_id')==$val->id ? 'selected' : '' }}>
+                            {{ $val->factory_name }}
+                        </option>
+                        @endforeach
+                    </select> --}}
+                    <select id="factory-filter" class="form-control">
+                        <option value="">Chọn nhà máy</option>
+                        @foreach($factories as $factory)
+                        <option value="{{ $factory->id }}">{{ $factory->factory_name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
 
 
             <div class="col-md-2 mb-2">
@@ -156,7 +175,7 @@
                                             <th scope="col">STT</th>
                                             <th scope="col">Mã Lô Hàng</th>
                                             <th scope="col">Loại mủ</th>
-                                            {{-- <th scope="col">Nhà máy</th> --}}
+                                            <th scope="col">Nhà Máy</th>
                                             <th scope="col">Ngày Sản Xuất</th>
                                             <th scope="col">Trạng Thái</th>
                                             <th scope="col">Thao Tác</th>
@@ -170,7 +189,7 @@
                                             <th scope="col">STT</th>
                                             <th scope="col">Mã Lô Hàng</th>
                                             <th scope="col">Loại mũ</th>
-                                            {{-- <th scope="col">Nhà máy</th> --}}
+                                            <th scope="col">Nhà Máy</th>
                                             <th scope="col">Ngày Sản Xuất</th>
                                             <th scope="col">Trạng Thái</th>
                                             <th scope="col">Thao Tác</th>
@@ -196,7 +215,7 @@
     $(document).ready(function() {
             let table = $('#contract-table').DataTable({
                 "language": {
-                    "url": "//cdn.datatables.net/plug-ins/1.10.21/i18n/Vietnamese.json",
+                    // "url": "//cdn.datatables.net/plug-ins/1.10.21/i18n/Vietnamese.json",
                     emptyTable: "Không có dữ liệu phù hợp.",
                 },
                 processing: true,
@@ -233,7 +252,8 @@
                         d.day = $("#day").val();
                         d.month = $("#month").val();
                         d.year = $("#year").val();
-                        // d.factory = $("#factory").val();
+                        // d.factory_id = $("#factory_id").val();
+                        d.factory_id = $('#factory-filter').val(); 
                     },
                 },
                 columns: [{
@@ -260,7 +280,7 @@
                         data: 'loai_mu',
                         name: 'loai_mu'
                     },
-                    // { data: 'factory', name: 'factory' },
+                    { data: 'factory_name', name: 'factory_name' },
                     {
                         data: 'date_sx',
                         name: 'date_sx'
@@ -282,7 +302,6 @@
                 // autoWidth: false,
                 // scrollX: true
             });
-
 
             $("#filter-btn").on("click", function() {
                 table.ajax.reload();

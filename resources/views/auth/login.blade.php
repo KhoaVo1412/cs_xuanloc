@@ -296,10 +296,13 @@
             <div class="footer-left" style="padding: 35px 0 0 0; line-height: 1.2rem;">
                 <div class="divider"></div>
                 <p style="color: #34A853"><strong> {{ $postLogin->company_name ?? '' }}</strong></p>
+                <p>MST: 0313770215</p>
+                <p>Hotline: 0908.994.689 (Ms. Thư Đỗ)</p>
                 <p>{{ $postLogin->commune_name ?? '' }}</p>
                 <a href="{{ $postLogin->link ?? '#' }}" target="_blank">
                     {{ $postLogin->link ?? '' }}
                 </a>
+                <p>Email: xuanlocrubber@gmail.com</p>
             </div>
         </div>
         <div class="right">
@@ -349,7 +352,7 @@
         });
     @endif
 </script>
-<script>
+{{-- <script>
     axios.post('/api/login', { email, password })
     .then(response => {
         const { token, redirectOptions } = response.data;
@@ -370,6 +373,6 @@
         console.log('Đăng nhập thất bại:', error.response.data.error);
     });
 
-</script>
+</script> --}}
 
 </html>

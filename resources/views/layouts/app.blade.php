@@ -24,8 +24,6 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-
-
     <link rel="stylesheet" href="/mazer-1.0.0/dist/assets/css/bootstrap.css">
 
     <link rel="stylesheet" href="/mazer-1.0.0/dist/assets/vendors/iconly/bold.css">
@@ -681,35 +679,37 @@
                 </div> --}}
                 <div class="page-title">
                     <div class="row align-items-center">
-                        <a href="#" class="burger-btn d-block d-xl-none" style="margin-left: 0%">
-                            <i class="bi bi-justify fs-3 text-dark"></i>
-                        </a>
-                        <div class="col-12 col-md-6 order-md-1 order-last">
-                            <div class="dropdown-custom">
-                                <h5 class="text-dark d-inline me-2">Xin chào,
-                                    <button class="btn btn-sm p-0 border-0 dropdown-toggle-custom" type="button"
-                                        id="userDropdownButton" onclick="toggleDropdown()">
-                                        <img src="/imgs/lohogo_xl.png" alt="Avatar" class="avatar-img">
-                                    </button> {{ Auth::user()->name }}
-                                </h5>
+                        <div
+                            class="col-12 col-md-6 order-md-1 order-last d-flex align-items-center justify-content-between">
+                            <div class="dropdown-custom d-flex align-items-center">
+                                <h5 class="text-dark d-inline me-2 mb-0">Xin chào,</h5>
 
-                                <ul class="dropdown-menu-custom" id="userDropdownMenu">
-                                    <li>
-                                        <a>Thông Tin</a>
-                                    </li>
+                                <button class="btn btn-sm p-0 border-0 dropdown-toggle-custom d-flex align-items-center"
+                                    type="button" id="userDropdownButton" onclick="toggleDropdown()">
+                                    <img src="/imgs/lohogo_xl.png" alt="Avatar" class="avatar-img me-1"
+                                        style="height: 32px; width: 32px; border-radius: 50%;">
+                                    <span class="fw-bold text-dark">{{ Auth::user()->name }}</span>
+                                </button>
+
+                                {{-- <ul class="dropdown-menu-custom" id="userDropdownMenu">
+                                    <li><a>Thông Tin</a></li>
                                     <li>
                                         <form id="logout-form" action="/logout" method="POST">
                                             @csrf
                                             <button type="submit">
-                                                <div class="sign">
-                                                    Đăng Xuất
-                                                </div>
+                                                <div class="sign">Đăng Xuất</div>
                                             </button>
                                         </form>
                                     </li>
-                                </ul>
+                                </ul> --}}
                             </div>
+
+                            <!-- Nút menu cho thiết bị nhỏ -->
+                            <a href="#" class="burger-btn d-block d-xl-none">
+                                <i class="bi bi-justify fs-3 text-dark"></i>
+                            </a>
                         </div>
+
                         <div class="col-12 col-md-6 order-md-2 order-first">
                             <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
                                 <ol class="breadcrumb">

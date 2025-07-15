@@ -134,7 +134,7 @@ class HomeController extends Controller
         $token = Auth::user()->remember_token;
         $listOrderResponse = Http::withHeaders([
             'token' => $token,
-        ])->get('https://app.horuco.com.vn/api/contracts/list');
+        ])->get('https://xuanloc.thaihunginfotech.com/api/contracts/list');
 
         if ($listOrderResponse->successful()) {
             $listOrderData = $listOrderResponse->json();
@@ -156,14 +156,14 @@ class HomeController extends Controller
 
         $listOrderResponse = Http::withHeaders([
             'token' => $token,
-        ])->get('https://app.horuco.com.vn/api/contracts/list');
+        ])->get('https://xuanloc.thaihunginfotech.com/api/contracts/list');
 
         if ($listOrderResponse->successful()) {
             $contract = collect($listOrderResponse->json()['data'])->firstWhere('id', $id);
 
             $detailOrderResponse = Http::withHeaders([
                 'token' => $token,
-            ])->get('https://app.horuco.com.vn/api/contracts/get', [
+            ])->get('https://xuanloc.thaihunginfotech.com/api/contracts/get', [
                 'id' => $id,
             ]);
 
@@ -204,14 +204,14 @@ class HomeController extends Controller
 
         $listOrderResponse = Http::withHeaders([
             'token' => $token,
-        ])->get('https://app.horuco.com.vn/api/contracts/list');
+        ])->get('https://xuanloc.thaihunginfotech.com/api/contracts/list');
 
         if ($listOrderResponse->successful()) {
             $contract = collect($listOrderResponse->json()['data'])->firstWhere('id', $id);
 
             $detailOrderResponse = Http::withHeaders([
                 'token' => $token,
-            ])->get('https://app.horuco.com.vn/api/contracts/get', [
+            ])->get('https://xuanloc.thaihunginfotech.com/api/contracts/get', [
                 'id' => $id,
             ]);
 
@@ -262,7 +262,7 @@ class HomeController extends Controller
 
     //     $listOrderResponse = Http::withHeaders([
     //         'token' => $token,
-    //     ])->get('https://app.horuco.com.vn/api/contracts/list');
+    //     ])->get('https://xuanloc.thaihunginfotech.com/api/contracts/list');
 
     //     if ($listOrderResponse->successful()) {
 
@@ -270,7 +270,7 @@ class HomeController extends Controller
 
     //         $detailOrderResponse = Http::withHeaders([
     //             'token' => $token,
-    //         ])->get('https://app.horuco.com.vn/api/contracts/get', [
+    //         ])->get('https://xuanloc.thaihunginfotech.com/api/contracts/get', [
     //             'id' => $id,
     //         ]);
 
@@ -338,7 +338,7 @@ class HomeController extends Controller
         try {
             $response = Http::withHeaders([
                 'token' => $token,
-            ])->get('https://app.horuco.com.vn/api/export-batch', [
+            ])->get('https://xuanloc.thaihunginfotech.com/api/export-batch', [
                 'batch_code' => $batch_code,
             ]);
 

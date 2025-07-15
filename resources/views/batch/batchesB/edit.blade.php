@@ -19,23 +19,39 @@
                 enctype="multipart/form-data">
                 @csrf
                 <div class="card custom-card">
-                    <div class="card-header d-flex">
+                    <div class="card-header justify-content-between d-flex">
                         <h5>Chỉnh Sửa Lô</h5>
-
+                        {{-- <button type="submit" class="btn btn-primary">Lưu</button> --}}
                     </div>
                     <div class="card-body">
                         <!-- <div class="row modal-body gy-4"> -->
                         <div class="row">
                             <div class="col-md-5">
+                                <label for="factory_id" class="form-label">Nhà Máy</label>
+                                <select name="factory_id" class="form-select" required>
+                                    <option value="">-- Chọn nhà máy --</option>
+                                    @foreach ($factories as $factory)
+                                    <option value="{{ $factory->id }}" {{ old('factory_id', $batchesB->factory_id) ==
+                                        $factory->id ? 'selected' : '' }}>
+                                        {{ $factory->factory_name }}
+                                    </option>
+                                    @endforeach
+                                </select>
+                                @error('factory_id')
+                                <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="col-md-6">
                                 <label for="batch" class="form-label">Mã Lô</label>
                                 <div class="d-flex">
                                     <input type="text" class="form-control" name="batch_code"
-                                        value="{{ $batchesB->batch_code }}" placeholder="Mã lô"
-                                        style="margin: 0 20px 0 0;" required>
-                                    <button type="submit" class="btn btn-primary">Lưu</button>
+                                        value="{{ $batchesB->batch_code }}" placeholder="Mã lô" required>
                                 </div>
                             </div>
-                            <div class="notice my-4">
+                            <div class="col-md-1" style="position: relative; top: 33px;">
+                                <button type="submit" class="btn btn-primary">Lưu</button>
+                            </div>
+                            <div class="notice my-5">
                                 <p> <strong style="color: #ff0000;">Chú Ý:</strong>
                                     <span>Nhập nhiều mã lô, cách nhau bằng dấu phẩy (Ví dụ:251001, 251002)</span>
                                 </p>

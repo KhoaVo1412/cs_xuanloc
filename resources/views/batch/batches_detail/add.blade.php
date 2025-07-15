@@ -50,6 +50,20 @@
                         {{-- <div class="card-title" style="font-weight: bold;">Chọn Mã Lô Và Ngày Sản Xuất</div> --}}
                         <div id="batch-container">
                             <div class="row batchRow">
+                                <!-- Nhà máy -->
+                                <div class="col-md-7 form-group">
+                                    <label for="factory_id" class="text-black">Chọn Nhà Máy</label>
+                                    <select class="form-control select2" name="factory_id[]" required
+                                        style="width: 100%">
+                                        <option value="">Chọn Nhà Máy</option>
+                                        @foreach ($factories as $factory)
+                                        <option value="{{ $factory->id }}" @if (old('factory_id.0')==$factory->id)
+                                            selected @endif>
+                                            {{ $factory->factory_name }}
+                                        </option>
+                                        @endforeach
+                                    </select>
+                                </div>
                                 <div class="col-md-6 form-group">
                                     <label for="batch_code" class="text-black">Mã Lô</label>
                                     {{-- @dd(old('batch_code')); --}}
@@ -76,7 +90,8 @@
                                 </div>
                                 <div class="col-md-2 d-flex align-items-end form-group">
                                     <button type="button" class="btn btn-success addBatchRow">+</button>
-                                    <button type="button" class="btn btn-danger removeBatchRow ms-2">-</button>
+                                    {{-- <button type="button" class="btn btn-danger removeBatchRow ms-2">-</button>
+                                    --}}
                                 </div>
                             </div>
                         </div>
@@ -105,19 +120,6 @@
                                 </select>
                             </div>
                         </div>
-
-                        {{-- <div class="row" style="padding-top:20px">
-                            <div class="col-md-6 form-group">
-                                <label for="batch_weight" class="text-black">Khối Lượng Lô Hàng (Tấn)</label>
-                                <input class="form-control" type="number" min="0" step="any" name="batch_weight"
-                                    placeholder="Nhập khối lượng lô" required value="{{ old('batch_weight') }}">
-                            </div>
-                            <div class="col-md-6 form-group">
-                                <label for="banh_weight" class="text-black">Khối Lượng Bành (Tấn)</label>
-                                <input class="form-control" type="number" min="0" step="any" name="banh_weight"
-                                    placeholder="Nhập khối lượng bành" required value="{{ old('banh_weight') }}">
-                            </div>
-                        </div> --}}
                         <div class="table-responsive">
                             <table id="detailsTable" class="table">
                                 <thead>
@@ -170,11 +172,20 @@
                         </div>
 
                         <button type="button" id="addRow" class="btn btn-success mt-2">Thêm Dòng</button>
-                        <script>
+                        {{-- <script>
                             $(document).ready(function() {
                                     const ingredientsData = @json($ingredients);
                                     let warningShown = false;
 
+                                    function filterIngredientsByDateAndFactory(productionDate, factoryId) {
+                                        if (!productionDate) return [];
+                                        return ingredientsData.filter(ingredient => {
+                                            const receivedDate = new Date(ingredient.received_date);
+                                            // Lọc theo ngày và theo nhà máy
+                                            return receivedDate <= productionDate
+                                                && ingredient.received_factory_id == factoryId;
+                                        });
+                                    }
                                     function setupAutocompleteObject(input, suggestions, callback) {
                                         input.autocomplete({
                                             source: suggestions,
@@ -355,13 +366,9 @@
                                             .filter((v, i, a) => a.indexOf(v) === i); // Ensure uniqueness
 
                                         setupAutocomplete(input, suggestions, function(selectedDate) {
-                                            // const selectedDateFormatted = formatDateToDDMMYYYY(selectedDate);
-                                            // const productionDateFormatted = formatDateToDDMMYYYY(productionDate);
+                                           
                                             const selectedDateObj = new Date(selectedDate.split('/').reverse().join('-'));
                                             const productionDateObj = formatDateToDDMMYYYY(productionDate);
-                                            // const productionDateObj = new Date(productionDate.split('/').reverse().join('-'));
-
-
                                             if (selectedDateObj > productionDateObj) {
                                                 Swal.fire({
                                                     icon: 'warning',
@@ -418,84 +425,6 @@
 
                                         updateVehicleList(row, selectedFarmName, selectedUnitName, selectedTypeOfPus, selectedDate);
                                     });
-// Khi người dùng tập trung vào ô nông trường
-// $(document).on('focus', '.farm-input', function() {
-//     const input = $(this);
-//     const row = input.closest('tr');
-//     const selectedTypeOfPus = row.find('.typeOfPus-input').val();
-//     const selectedDate = row.find('.received-date-input').val();
-//     const productionDate = getProductionDate();
-
-//     if (!productionDate || !selectedTypeOfPus || !selectedDate) {
-//         input.val('');
-//         return;
-//     }
-
-//     const selectedDateFormatted = formatDateToDDMMYYYY(selectedDate);
-//     const productionDateFormatted = formatDateToDDMMYYYY(productionDate);
-
-//     if (selectedDateFormatted > productionDateFormatted) {
-//         Swal.fire({
-//             icon: 'warning',
-//             title: 'Ngày Tiếp Nhận phải nhỏ hơn hoặc bằng Ngày Sản Xuất!',
-//             confirmButtonText: 'OK'
-//         }).then(() => {
-//             input.val('');
-//             row.find('.received-date-input').val('');
-//             row.find('.unit-input').val('');
-//             row.find('.farm-id-input').val('');
-//             row.find('.vehicle-input').val('');
-//             row.find('.trip-input').val('');
-//             row.find('.received-date-input').focus();
-//         });
-//         return;
-//     }
-
-//     // Hiển thị gợi ý nông trường
-//     updateFarmSuggestions(row, null, null, selectedTypeOfPus, selectedDate);
-// });
-
-// Khi người dùng tập trung vào ô số xe
-// $(document).on('focus', '.vehicle-input', function() {
-//     const input = $(this);
-//     const row = input.closest('tr');
-//     const selectedTypeOfPus = row.find('.typeOfPus-input').val();
-//     const selectedDate = row.find('.received-date-input').val();
-//     const selectedFarmName = row.find('.farm-input').val();
-//     const selectedUnitName = row.find('.unit-input').val();
-//     const productionDate = getProductionDate();
-
-//     if (!productionDate || !selectedTypeOfPus || !selectedDate || !selectedFarmName || !selectedUnitName) {
-//         input.val('');
-//         return;
-//     }
-
-//     const selectedDateFormatted = formatDateToDDMMYYYY(selectedDate);
-//     const productionDateFormatted = formatDateToDDMMYYYY(productionDate);
-
-//     if (selectedDateFormatted > productionDateFormatted) {
-//         Swal.fire({
-//             icon: 'warning',
-//             title: 'Ngày Tiếp Nhận phải nhỏ hơn hoặc bằng Ngày Sản Xuất!',
-//             confirmButtonText: 'OK'
-//         }).then(() => {
-//             input.val('');
-//             row.find('.received-date-input').val('');
-//             row.find('.farm-input').val('');
-//             row.find('.unit-input').val('');
-//             row.find('.farm-id-input').val('');
-//             row.find('.vehicle-input').val('');
-//             row.find('.trip-input').val('');
-//             row.find('.received-date-input').focus();
-//         });
-//         return;
-//     }
-
-//     // Hiển thị gợi ý số xe
-//     updateVehicleList(row, selectedFarmName, selectedUnitName, selectedTypeOfPus, selectedDate);
-// });
-
-// Hiển thị gợi ý nông trường
                                     function updateFarmSuggestions(row, selectedFarm, selectedUnitName, selectedTypeOfPus, selectedDate) {
                                         const productionDate = getProductionDate();
                                         if (!productionDate) return;
@@ -670,7 +599,304 @@
                                         });
                                     });
                                 });
+                        </script> --}}
+                        <script>
+                            $(document).ready(function() {
+                                const ingredientsData = @json($ingredients);
+                                let warningShownDate = false;
+
+                                function getProductionDate() {
+                                    const val = $('.date-sx-input').val();
+                                    if (!val) return null;
+                                    const [d, m, y] = val.split('/');
+                                    return new Date(`${y}-${m}-${d}`);
+                                }
+                                function formatDateToDDMMYYYY(dateStr) {
+                                    if (!dateStr) return '';
+                                    const dt = new Date(dateStr);
+                                    if (isNaN(dt)) return '';
+                                    const dd = String(dt.getDate()).padStart(2,'0');
+                                    const mm = String(dt.getMonth()+1).padStart(2,'0');
+                                    const yyyy = dt.getFullYear();
+                                    return `${dd}/${mm}/${yyyy}`;
+                                }
+                                function filterIngredients(prodDate, factoryId) {
+                                    if (!prodDate || !factoryId) return [];
+                                    return ingredientsData.filter(item => {
+                                        const recv = new Date(item.received_date);
+                                        return recv <= prodDate && item.received_factory_id == factoryId;
+                                    });
+                                }
+                                function setupAutocomplete(input, list, onSelectText) {
+                                    input.autocomplete({
+                                        source: list,
+                                        minLength: 0,
+                                        select(event, ui) {
+                                            input.val(ui.item.value);
+                                            if (onSelectText) onSelectText(ui.item.value);
+                                            return false;
+                                        }
+                                    }).autocomplete('search', '');
+                                }
+                                function setupAutocompleteObject(input, list, onSelectObj) {
+                                    input.autocomplete({
+                                        source: list,
+                                        minLength: 0,
+                                        select(event, ui) {
+                                            input.val(ui.item.label);
+                                            if (onSelectObj) onSelectObj(ui.item);
+                                            return false;
+                                        }
+                                    }).autocomplete('search', '');
+                                }
+                                $('select[name="factory_id[]"]').on('change', function() {
+                                    $('#detailsTable tbody tr').find('input[type=text]').val('');
+                                    warningShownDate = false;
+                                });
+                                $(document).on('focus', '.typeOfPus-input', function() {
+                                    const prodDate = getProductionDate();
+                                    const factoryId = $('select[name="factory_id[]"]').val();
+                                    const input = $(this);
+
+                                    if (!factoryId) {
+                                        Swal.fire({ icon:'warning', title:'Vui lòng chọn Nhà máy trước!', confirmButtonText:'OK' });
+                                        return;
+                                    }
+                                    if (!prodDate && !warningShownDate) {
+                                        Swal.fire({ icon:'warning', title:'Vui lòng chọn Ngày Sản Xuất trước!', confirmButtonText:'OK' })
+                                            .then(() => { $('.date-sx-input').focus(); warningShownDate = true; });
+                                        return;
+                                    }
+
+                                    const filtered = filterIngredients(prodDate, factoryId);
+                                    const pusList = Array.from(new Set(filtered.map(i => i.type_of_pus?.name_pus).filter(v=>v)));
+                                    setupAutocomplete(input, pusList, selectedPus => {
+                                        const row = input.closest('tr');
+                                        row.find('input').not('.typeOfPus-input').val('');
+                                        const dates = Array.from(new Set(
+                                            filtered
+                                                .filter(i => i.type_of_pus?.name_pus === selectedPus)
+                                                .map(i => formatDateToDDMMYYYY(i.received_date))
+                                        ));
+                                        setupAutocomplete(row.find('.received-date-input'), dates, date => {
+                                            row.find('.farm-input, .unit-input, .farm-id-input, .vehicle-input, .trip-input').val('');
+                                            setTimeout(()=> row.find('.farm-input').focus(), 300);
+                                        });
+                                    });
+                                });
+                                $(document).on('focus', '.received-date-input', function() {
+                                    const row = $(this).closest('tr');
+                                    const prodDate = getProductionDate();
+                                    const factoryId = $('select[name="factory_id[]"]').val();
+                                    const typePus = row.find('.typeOfPus-input').val();
+                                    const input = $(this);
+
+                                    if (!typePus) { input.val(''); return; }
+
+                                    const filtered = filterIngredients(prodDate, factoryId)
+                                        .filter(i => i.type_of_pus?.name_pus === typePus);
+                                    const dates = Array.from(new Set(filtered.map(i => formatDateToDDMMYYYY(i.received_date))));
+                                    setupAutocomplete(input, dates, selDate => {
+                                        const selDateObj = new Date(selDate.split('/').reverse().join('-'));
+                                        if (selDateObj > prodDate) {
+                                            Swal.fire({ icon:'warning', title:'Ngày Tiếp Nhận phải ≤ Ngày Sản Xuất!', confirmButtonText:'OK' })
+                                                .then(()=> { input.val(''); row.find('.typeOfPus-input').focus(); });
+                                            return;
+                                        }
+                                        row.find('.farm-input, .unit-input, .farm-id-input, .vehicle-input, .trip-input').val('');
+                                        setTimeout(()=> row.find('.farm-input').focus(),300);
+                                    });
+                                });
+
+                                // focus Farm
+                                $(document).on('focus', '.farm-input', function() {
+                                    const row = $(this).closest('tr');
+                                    const prodDate = getProductionDate();
+                                    const factoryId = $('select[name="factory_id[]"]').val();
+                                    const typePus = row.find('.typeOfPus-input').val();
+                                    const recvDate = row.find('.received-date-input').val();
+                                    const input = $(this);
+
+                                    if (!recvDate) { input.val(''); return; }
+
+                                    const filtered = filterIngredients(prodDate, factoryId)
+                                        .filter(i =>
+                                            i.type_of_pus?.name_pus === typePus &&
+                                            formatDateToDDMMYYYY(i.received_date) === recvDate
+                                        );
+
+                                    const farms = Array.from(new Set(filtered.map(i =>
+                                        `${i.farm?.farm_name} - ${i.farm?.unit_relation?.unit_name}`
+                                    ))).map(label => {
+                                        const match = filtered.find(i =>
+                                            `${i.farm?.farm_name} - ${i.farm?.unit_relation?.unit_name}` === label
+                                        );
+                                        return {
+                                            label,
+                                            farm_id: match.farm?.id,
+                                            unit_name: match.farm?.unit_relation?.unit_name
+                                        };
+                                    });
+
+                                    setupAutocompleteObject(input, farms, obj => {
+                                        const [farmName, unitName] = obj.label.split(' - ');
+                                        row.find('.farm-input').val(farmName);
+                                        row.find('.unit-input').val(unitName);
+                                        row.find('.farm-id-input').val(obj.farm_id);
+                                        row.find('.vehicle-input, .trip-input').val('');
+                                        setTimeout(()=> row.find('.vehicle-input').focus(),300);
+                                    });
+                                });
+
+                                // focus Vehicle
+                                $(document).on('focus', '.vehicle-input', function() {
+                                    const row = $(this).closest('tr');
+                                    const prodDate = getProductionDate();
+                                    const factoryId = $('select[name="factory_id[]"]').val();
+                                    const typePus = row.find('.typeOfPus-input').val();
+                                    const recvDate = row.find('.received-date-input').val();
+                                    const farmName = row.find('.farm-input').val();
+
+                                    if (!farmName) { $(this).val(''); return; }
+
+                                    const filtered = filterIngredients(prodDate, factoryId)
+                                        .filter(i =>
+                                            i.type_of_pus?.name_pus === typePus &&
+                                            formatDateToDDMMYYYY(i.received_date) === recvDate &&
+                                            i.farm?.farm_name === farmName
+                                        );
+
+                                    const vehicles = Array.from(new Set(filtered.map(i => i.vehicle?.vehicle_number).filter(v=>v)));
+                                    setupAutocomplete($(this), vehicles, () => {
+                                        setTimeout(()=> row.find('.trip-input').focus(),300);
+                                    });
+                                });
+
+                                // focus Trip và check trùng lặp
+                                function getOtherIngredients(curRow) {
+                                    const arr = [];
+                                    $('#detailsTable tbody tr').not(curRow).each((i, row) => {
+                                        const $r = $(row);
+                                        arr.push({
+                                            typeOfPus: $r.find('.typeOfPus-input').val(),
+                                            receivedDate: $r.find('.received-date-input').val(),
+                                            farm: $r.find('.farm-input').val(),
+                                            vehicle: $r.find('.vehicle-input').val(),
+                                            trip: $r.find('.trip-input').val(),
+                                            rowIndex: i
+                                        });
+                                    });
+                                    return arr;
+                                }
+
+                                function checkDuplicate(curRow) {
+                                    const vals = {
+                                        typeOfPus: curRow.find('.typeOfPus-input').val(),
+                                        receivedDate: curRow.find('.received-date-input').val(),
+                                        farm: curRow.find('.farm-input').val(),
+                                        vehicle: curRow.find('.vehicle-input').val(),
+                                        trip: curRow.find('.trip-input').val()
+                                    };
+                                    if (!vals.typeOfPus||!vals.receivedDate||!vals.farm||!vals.vehicle||!vals.trip) return false;
+
+                                    const others = getOtherIngredients(curRow);
+                                    const dup = others.find(o =>
+                                        o.typeOfPus===vals.typeOfPus &&
+                                        o.receivedDate===vals.receivedDate &&
+                                        o.farm===vals.farm &&
+                                        o.vehicle===vals.vehicle &&
+                                        o.trip===vals.trip
+                                    );
+                                    if (dup) {
+                                        Swal.fire({
+                                            icon: 'warning',
+                                            title: 'Nguyên liệu trùng lặp!',
+                                            text: `Đã có ở dòng ${dup.rowIndex+1}.`
+                                        }).then(()=> {
+                                            curRow.find('.trip-input').val('').focus();
+                                        });
+                                        return true;
+                                    }
+                                    return false;
+                                }
+
+                                $(document).on('focus', '.trip-input', function() {
+                                    const input = $(this);
+                                    const row = input.closest('tr');
+                                    const prodDate = getProductionDate();
+                                    const factoryId = $('select[name="factory_id[]"]').val();
+                                    const typePus = row.find('.typeOfPus-input').val();
+                                    const recvDate = row.find('.received-date-input').val();
+                                    const farm = row.find('.farm-input').val();
+                                    const vehicle = row.find('.vehicle-input').val();
+
+                                    if (!vehicle) { input.val(''); return; }
+
+                                    const filtered = filterIngredients(prodDate, factoryId)
+                                        .filter(i =>
+                                            i.type_of_pus?.name_pus === typePus &&
+                                            formatDateToDDMMYYYY(i.received_date) === recvDate &&
+                                            i.farm?.farm_name === farm &&
+                                            i.vehicle?.vehicle_number === vehicle
+                                        );
+                                    const trips = Array.from(new Set(filtered.map(i => i.trip)));
+                                    setupAutocomplete(input, trips, () => {
+                                        checkDuplicate(row);
+                                    });
+                                });
+
+                                // Thêm dòng mới
+                                $('#addRow').on('click', function() {
+                                    const first = $('#detailsTable tbody tr:first');
+                                    if (!first.find('.typeOfPus-input').val() ||
+                                        !first.find('.received-date-input').val() ||
+                                        !first.find('.farm-input').val() ||
+                                        !first.find('.vehicle-input').val() ||
+                                        !first.find('.trip-input').val()
+                                    ) {
+                                        Swal.fire({ icon:'warning', title:'Điền đầy đủ thông tin dòng đầu tiên!' });
+                                        return;
+                                    }
+                                    if (!getProductionDate()) {
+                                        Swal.fire({ icon:'warning', title:'Chọn Ngày Sản Xuất!' })
+                                            .then(()=> $('.date-sx-input').focus());
+                                        return;
+                                    }
+                                    const idx = $('#detailsTable tbody tr').length;
+                                    const newRow = `
+                                        <tr>
+                                            <td><input type="text" class="form-control typeOfPus-input" name="batches[0][ingredients][${idx}][type_of_pus]" placeholder="Chọn Loại Mủ" required></td>
+                                            <td><input type="text" class="form-control received-date-input" name="batches[0][ingredients][${idx}][received_date]" placeholder="Chọn Ngày Tiếp Nhận" required></td>
+                                            <td>
+                                                <input type="text" class="form-control farm-input" placeholder="Chọn Nông Trường" required>
+                                                <input type="hidden" class="farm-id-input" name="batches[0][ingredients][${idx}][farm_ids]">
+                                            </td>
+                                            <td><input type="text" class="form-control vehicle-input" name="batches[0][ingredients][${idx}][vehicle]" placeholder="Chọn Số Xe" required></td>
+                                            <td><input type="text" class="form-control trip-input" name="batches[0][ingredients][${idx}][trip]" placeholder="Số Chuyến" required></td>
+                                            <td><button type="button" class="btn btn-danger deleteRow">Xóa</button></td>
+                                        </tr>
+                                    `;
+                                    $('#detailsTable tbody').append(newRow);
+                                });
+
+                                // Xóa dòng
+                                $(document).on('click', '.deleteRow', function() {
+                                    const row = $(this).closest('tr');
+                                    if (row.index() === 0) {
+                                        Swal.fire({ icon:'info', title:'Không thể xóa dòng đầu!' });
+                                        return;
+                                    }
+                                    row.remove();
+                                });
+
+                                // Khi đổi ngày sản xuất, reset cảnh báo và clear tất cả detail
+                                $('.date-sx-input').on('change', function() {
+                                    warningShownDate = false;
+                                    $('#detailsTable tbody tr').find('input[type=text]').val('');
+                                });
+                            });
                         </script>
+
                     </div>
                 </div>
             </form>
@@ -704,151 +930,199 @@
 </script>
 <script>
     $(document).ready(function() {
-            function refreshBatchDropdowns(currentSelect = null) {
-                const selectedValues = [];
+    let selectedFactoryId = null; // Biến lưu thông tin về nhà máy đã chọn
+    let batches = []; // Biến toàn cục lưu danh sách Mã Lô từ API
 
-                // Lưu danh sách đã chọn
-                $('.batchRow select[name="batch_code[]"]').each(function() {
-                    const val = $(this).val();
-                    if (val) selectedValues.push(parseInt(val));
-                });
+    // Khi chọn nhà máy, lưu lại factoryId và lấy Mã Lô tương ứng
+    $(document).on('change', 'select[name="factory_id[]"]', function() {
+        selectedFactoryId = $(this).val(); // Lưu giá trị nhà máy đã chọn
 
-                // Duyệt tất cả dropdowns
-                $('.batchRow select[name="batch_code[]"]').each(function() {
-                    const $dropdown = $(this);
-                    const val = $dropdown.val();
-                    const currentVal = val ? parseInt(val) : null;
+        if (!selectedFactoryId) {
+            $('select[name="batch_code[]"]').empty().append('<option value="">Chọn Mã Lô</option>');
+            return;
+        }
 
-                    // Loại các mã đã chọn, nhưng giữ lại giá trị hiện tại của dropdown này
-                    const filteredSelected = selectedValues.filter(id => id !== currentVal);
+        // Gửi yêu cầu AJAX để lấy danh sách Mã Lô
+        $.ajax({
+            url: '/get-batches-by-factory/' + selectedFactoryId,
+            method: 'GET',
+            success: function(response) {
+                console.log(response);
 
-                    const optionsHtml = batchesOptions(filteredSelected);
-
-                    $dropdown.html('<option value="">Chọn Mã Lô</option>' + optionsHtml);
-                    $dropdown.val(currentVal).trigger('change.select2');
-                });
-            }
-
-            $('.select2').select2({
-                language: "vi",
-                placeholder: "Chọn giá trị",
-                allowClear: true,
-                width: '100%'
-            });
-            $(document).on('click', '.addBatchRow', function() {
-                const container = $('#batch-container');
-
-                let existingIds = container.find('.datetimepicker').map(function() {
-                    return parseInt($(this).attr('id').split('_')[2]); // Lấy số từ ID
-                }).get();
-
-                let newId = 1;
-                while (existingIds.includes(newId)) {
-                    newId++;
-                }
-
-                const selectedIds = [];
+                batches = response.batches || [];
                 $('select[name="batch_code[]"]').each(function() {
-                    const val = $(this).val();
-                    if (val) selectedIds.push(parseInt(val));
-                });
+                    const $dropdown = $(this);
+                    const currentVal = $dropdown.val();
+                    $dropdown.empty().append('<option value="">Chọn Mã Lô</option>');
 
-                const newRow = `
-                <div class="row batchRow mt-2">
-                    <div class="col-md-6 form-group">
-                        <label for="batch_code" class="text-black">Mã Lô</label>
-                        <select class="form-control select2" name="batch_code[]" required style="width: 100%">
-                            <option value="">Chọn Mã Lô</option>
-                           ${batchesOptions(selectedIds)}
-                        </select>
-                    </div>
-                    <div class="col-md-4 form-group">
-                        <label for="date_sx" class="text-black">Ngày Sản Xuất</label>
-                        <div class="datepicker-wrapper">
-                            <input type="text" class="form-control date-sx-input datetimepicker datepicker"
-                            name="date_sx[]" id="date_sx_${newId}" placeholder="dd/mm/yyyy" autocomplete="off"
-                            onkeydown="return false;" required>
-                            <i class="fa fa-calendar calendar-icon" style="cursor: pointer;"></i>
-                        </div>
-                    </div>
-                    <div class="col-md-2 d-flex align-items-end form-group">
-                        <button type="button" class="btn btn-success addBatchRow">+</button>
-                        <button type="button" class="btn btn-danger removeBatchRow ms-2">-</button>
-                    </div>
-                </div>
-            `;
-
-                container.append(newRow);
-                $('.select2').select2();
-                initDateTimePicker(`#date_sx_${newId}`);
-                refreshBatchDropdowns();
-
-                $(document).on('change', 'select[name="batch_code[]"]', function() {
-                    const $this = $(this);
-                    setTimeout(() => {
-                        refreshBatchDropdowns($this);
-                    }, 300); // Cho select2 đóng xong rồi mới cập nhật
-                });
-            });
-            $(document).on('click', '.removeBatchRow', function() {
-                const row = $(this).closest('.batchRow');
-                const rowCount = $('#batch-container .batchRow').length;
-
-                if (rowCount > 1) {
-                    Swal.fire({
-                        title: 'Bạn có chắc muốn xóa dòng này?',
-                        // text: "Dữ liệu sẽ bị mất nếu chưa lưu.",
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonText: 'Có, xóa đi!',
-                        cancelButtonText: 'Hủy',
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            row.remove();
-                            refreshBatchDropdowns();
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Đã xóa!',
-                                text: 'Dòng Mã Lô đã được xóa.',
-                                timer: 1500,
-                                showConfirmButton: false
-                            });
-                        }
+                    batches.forEach(function(batch) {
+                        $dropdown.append(`<option value="${batch.id}">${batch.batch_code}</option>`);
                     });
-                } else {
-                    Swal.fire({
-                        icon: 'info',
-                        title: 'Không thể xóa!',
-                        text: 'Cần giữ lại ít nhất một dòng Mã Lô.',
-                        confirmButtonText: 'OK'
-                    });
-                }
-            });
 
-            // function batchesOptions() {
-            //     const batches = @json($batches);
-            //     const batchIdsWithIngredients = @json($batchIdsWithIngredients);
-            //     return batches.map(batch => {
-            //         const disabled = batchIdsWithIngredients.includes(batch.id) ? 'disabled' : '';
-            //         return `<option value="${batch.id}" ${disabled}>${batch.batch_code}</option>`;
-            //     }).join('');
-            // }
-
-            function batchesOptions(selectedIds = []) {
-                const batches = @json($batches);
-                const batchIdsWithIngredients = @json($batchIdsWithIngredients);
-
-                return batches
-                    .filter(batch => {
-                        return !batchIdsWithIngredients.includes(batch.id) && !selectedIds.includes(batch.id);
-                    })
-                    .map(batch => {
-                        return `<option value="${batch.id}">${batch.batch_code}</option>`;
-                    })
-                    .join('');
+                    if (currentVal) $dropdown.val(currentVal).trigger('change.select2');
+                });
+            },
+            error: function(xhr) {
+                console.error('Lỗi khi lấy danh sách Mã Lô:', xhr);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi',
+                    text: 'Không thể lấy danh sách Mã Lô. Vui lòng thử lại!',
+                });
             }
         });
+    });
+
+    function refreshBatchDropdowns(currentSelect = null) {
+        const selectedValues = [];
+
+        // Lưu danh sách các giá trị "Mã Lô" đã chọn
+        $('.batchRow select[name="batch_code[]"]').each(function() {
+            const val = $(this).val();
+            if (val) selectedValues.push(parseInt(val));
+        });
+
+        // Cập nhật lại các dropdown
+        $('.batchRow select[name="batch_code[]"]').each(function() {
+            const $dropdown = $(this);
+            const currentVal = $dropdown.val() ? parseInt($dropdown.val()) : null;
+
+            // Lọc các Mã Lô đã chọn, nhưng giữ lại giá trị hiện tại của dropdown này
+            const filteredSelected = selectedValues.filter(id => id !== currentVal);
+
+            const optionsHtml = batchesOptions(filteredSelected);
+
+            $dropdown.html('<option value="">Chọn Mã Lô</option>' + optionsHtml);
+            $dropdown.val(currentVal).trigger('change.select2');
+        });
+    }
+
+    // Cấu hình Select2
+    $('.select2').select2({
+        language: "vi",
+        placeholder: "Chọn nhà máy",
+        allowClear: true,
+        width: '100%'
+    });
+
+    // Khi nhấn nút thêm dòng mới
+    $(document).on('click', '.addBatchRow', function() {
+        if (!selectedFactoryId) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Chưa chọn nhà máy',
+                text: 'Vui lòng chọn nhà máy trước khi thêm dòng!',
+            });
+            return;
+        }
+
+        const container = $('#batch-container');
+        let existingIds = container.find('.datetimepicker').map(function() {
+            return parseInt($(this).attr('id').split('_')[2]);
+        }).get();
+
+        let newId = 1;
+        while (existingIds.includes(newId)) {
+            newId++;
+        }
+
+        const selectedIds = [];
+        $('select[name="batch_code[]"]').each(function() {
+            const val = $(this).val();
+            if (val) selectedIds.push(parseInt(val));
+        });
+
+        const newRow = `
+            <div class="row batchRow mt-2">
+                <div class="col-md-6 form-group">
+                    <label for="batch_code" class="text-black">Mã Lô</label>
+                    <select class="form-control select2" name="batch_code[]" required style="width: 100%">
+                        <option value="">Chọn Mã Lô</option>
+                        ${batchesOptions(selectedIds)}
+                    </select>
+                </div>
+                <div class="col-md-4 form-group">
+                    <label for="date_sx" class="text-black">Ngày Sản Xuất</label>
+                    <div class="datepicker-wrapper">
+                        <input type="text" class="form-control date-sx-input datetimepicker datepicker"
+                            name="date_sx[]" id="date_sx_${newId}" placeholder="dd/mm/yyyy" autocomplete="off"
+                            onkeydown="return false;" required>
+                        <i class="fa fa-calendar calendar-icon" style="cursor: pointer;"></i>
+                    </div>
+                </div>
+                <div class="col-md-2 d-flex align-items-end form-group">
+                    <button type="button" class="btn btn-success addBatchRow">+</button>
+                    <button type="button" class="btn btn-danger removeBatchRow ms-2">-</button>
+                </div>
+            </div>
+        `;
+
+        container.append(newRow);
+        $('.select2').select2();
+        initDateTimePicker(`#date_sx_${newId}`);
+
+        // Cập nhật khi chọn "Mã Lô"
+        $(document).on('change', 'select[name="batch_code[]"]', function() {
+            const $this = $(this);
+            setTimeout(() => {
+                refreshBatchDropdowns($this);
+            }, 300);
+        });
+    });
+
+    // Khi nhấn nút xóa dòng
+    $(document).on('click', '.removeBatchRow', function() {
+        const row = $(this).closest('.batchRow');
+        const rowCount = $('#batch-container .batchRow').length;
+
+        if (rowCount > 1) {
+            Swal.fire({
+                title: 'Bạn có chắc muốn xóa dòng này?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Có, xóa đi!',
+                cancelButtonText: 'Hủy',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    row.remove();
+                    refreshBatchDropdowns();
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Đã xóa!',
+                        text: 'Dòng Mã Lô đã được xóa.',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                }
+            });
+        } else {
+            Swal.fire({
+                icon: 'info',
+                title: 'Không thể xóa!',
+                text: 'Cần giữ lại ít nhất một dòng Mã Lô.',
+                confirmButtonText: 'OK'
+            });
+        }
+    });
+
+    // Hàm tạo các option cho dropdown "Mã Lô"
+    function batchesOptions(selectedIds = []) {
+        const batchIdsWithIngredients = @json($batchIdsWithIngredients); // Danh sách các lô có nguyên liệu
+
+        return batches
+            .filter(batch => {
+                return !batchIdsWithIngredients.includes(batch.id) && 
+                       !selectedIds.includes(batch.id) && 
+                       batch.factory_id == selectedFactoryId;
+            })
+            .map(batch => {
+                return `<option value="${batch.id}">${batch.batch_code}</option>`;
+            })
+            .join('');
+    }
+});
 </script>
+
 <style>
     .form-label {
         font-weight: bold;

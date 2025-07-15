@@ -15,4 +15,8 @@ class Factory extends Model
     {
         return $this->hasMany(Ingredient::class, 'received_factory_id');
     }
+    public function batches()
+    {
+        return $this->hasMany(Batch::class, 'factory_id');
+    }
 }

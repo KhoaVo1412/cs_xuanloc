@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="page-title my-3">
+<div class="page-title my-1">
     <div class="row">
         <div class="col-12 col-md-6 order-md-1 order-last">
             <h5></h5>
@@ -52,24 +52,20 @@
                         placeholder="dd/mm/yyyy" value="{{ \Carbon\Carbon::parse($batch->date_sx)->format('d/m/Y') }}"
                         autocomplete="off" onkeydown="return false;">
                     <i class="fa fa-calendar calendar-icon" style="cursor: pointer;"></i>
-                    <!-- Icon bấm mở DatePicker -->
                 </div>
             </div>
 
             <div class="form-group col-lg-4">
                 <label for="ngay_kiem_nghiem" class="text-dark">Ngày Kiểm Nghiệm</label>
-                {{-- <input type="date" class="form-control" id="ngay_kiem_nghiem" name="ngay_kiem_nghiem"
-                    value="{{ old('ngay_kiem_nghiem', $batch->testingResult->ngay_kiem_nghiem) }}" required> --}}
                 <div class="datepicker-wrapper">
                     <input type="text" class="form-control datetimepicker datepicker" name="ngay_kiem_nghiem"
                         id="ngay_kiem_nghiem" placeholder="dd/mm/yyyy"
                         value="{{ \Carbon\Carbon::parse(old('ngay_kiem_nghiem', $batch->testingResult->ngay_kiem_nghiem))->format('d/m/Y') }}"
                         required autocomplete="off" onkeydown="return false;">
                     <i class="fa fa-calendar calendar-icon" style="cursor: pointer;"></i>
-                    <!-- Icon bấm mở DatePicker -->
                 </div>
             </div>
-            <div class="form-group col-lg-6">
+            <div class="form-group col-lg-4">
                 <label for="rank" class="text-dark">Xếp Hạng</label>
                 {{-- <select class="form-control" id="rank" name="rank" required>
                     <option value="CV60" {{ old('rank', $batch->testingResult->rank) == 'CV60' ? 'selected' : '' }}>
@@ -106,13 +102,20 @@
 
 
 
-            <div class="form-group col-lg-6">
+            <div class="form-group col-lg-4">
                 <label for="type" class="text-dark">Loại Kiểm Nghiệm</label>
                 <select id="contract_type_id" name="type" class="form-select" disabled>
                     <option value="svr" {{ $batch->type == 'svr' ? 'selected' : '' }}>SVR</option>
                     {{-- <option value="latex" {{ $batch->type == "latex" ? 'selected' : '' }}>Latex</option> --}}
                     {{-- <option value="rss" {{ $batch->type == "rss" ? 'selected' : '' }}>RSS</option> --}}
                 </select>
+            </div>
+            <div class="form-group col-lg-4">
+                <label for="factory_id" class="text-dark">Nhà Máy</label>
+                <div class="form-group">
+                    <input type="text" class="form-control" name="factory_name" value="{{ $factory->factory_name }}"
+                        readonly>
+                </div>
             </div>
             <style>
                 #svr {
